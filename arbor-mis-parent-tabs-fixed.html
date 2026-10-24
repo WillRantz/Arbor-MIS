@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arbor MIS | Behaviour & Points</title>
+<style>
+:root{--navy:#14233f;--navy2:#1c3154;--blue:#3767d6;--blue2:#edf3ff;--bg:#f4f6fa;--card:#fff;--text:#1f2937;--muted:#718096;--line:#e5eaf2;--green:#168452;--greenbg:#e8f7ef;--red:#c53b45;--redbg:#fff0f0;--amber:#b7791f;--shadow:0 6px 24px rgba(20,35,63,.06)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text)}button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+.login-wrap{min-height:100vh;display:grid;place-items:center;padding:24px;background:linear-gradient(135deg,#eef3ff,#f7f9fc)}.login-card{width:min(420px,100%);background:#fff;border:1px solid var(--line);border-radius:22px;padding:34px;box-shadow:var(--shadow)}.brandmark{width:52px;height:52px;background:var(--blue);color:white;border-radius:15px;display:grid;place-items:center;font-size:25px;margin-bottom:18px}.login-card h1{font-size:25px;margin:0 0 7px}.muted{color:var(--muted)}.field{display:grid;gap:7px;margin:14px 0}.field label{font-size:13px;font-weight:700;color:#475569}.field input,.field select,.field textarea,.toolbar input,.toolbar select{width:100%;border:1px solid #dce3ee;border-radius:10px;padding:11px 12px;background:#fff;color:var(--text);outline:none}.field input:focus,.field select:focus,.field textarea:focus,.toolbar input:focus,.toolbar select:focus{border-color:#7e9deb;box-shadow:0 0 0 3px #3767d61a}.password-row{display:flex;gap:8px}.password-row input{flex:1}.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:700;background:#edf1f7;color:#344054;transition:.15s}.btn:hover{filter:brightness(.97)}.btn-primary{background:var(--blue);color:white}.btn-green{background:var(--greenbg);color:var(--green)}.btn-red{background:var(--redbg);color:var(--red)}.btn-outline{background:#fff;border:1px solid var(--line)}.btn-sm{padding:7px 10px;font-size:12px}.full{width:100%}.login-note{background:#f6f8fc;padding:12px;border-radius:10px;font-size:12px;line-height:1.6;margin-top:18px}
+.app{min-height:100vh;display:flex}.sidebar{width:248px;background:var(--navy);color:#c9d3e5;padding:22px 14px;display:flex;flex-direction:column;flex-shrink:0}.side-brand{display:flex;align-items:center;gap:11px;padding:0 10px 26px;color:#fff;font-weight:800;font-size:16px}.side-icon{width:38px;height:38px;border-radius:12px;background:#3767d6;display:grid;place-items:center;font-size:19px}.nav-label{font-size:10px;letter-spacing:1.3px;text-transform:uppercase;color:#8293b1;padding:13px 12px 7px}.nav-btn{width:100%;display:flex;gap:12px;align-items:center;text-align:left;border:0;color:#c9d3e5;background:transparent;padding:11px 12px;border-radius:10px;margin:2px 0;font-weight:600;font-size:13px}.nav-btn .ico{width:20px;text-align:center;font-size:16px}.nav-btn:hover,.nav-btn.active{background:#263b5f;color:#fff}.side-bottom{margin-top:auto;border-top:1px solid #344563;padding:18px 10px 0;font-size:12px;color:#91a0bb;line-height:1.6}
+/* Collapsible sidebar navigation groups */
+.nav-group{margin:3px 0 7px;border-radius:11px;overflow:hidden}
+.nav-group[hidden]{display:none!important}
+.nav-group summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;color:#aebbd0;font-size:10px;font-weight:800;letter-spacing:1.05px;text-transform:uppercase;cursor:pointer;border-radius:9px;user-select:none}
+.nav-group summary::-webkit-details-marker{display:none}
+.nav-group summary::after{content:'▸';font-size:13px;letter-spacing:0;transition:transform .15s ease;color:#8192b0}
+.nav-group[open] summary::after{transform:rotate(90deg)}
+.nav-group summary:hover{background:#1b2e4d;color:#fff}
+.nav-group-items{padding:1px 0 5px 5px}
+.nav-group .nav-btn{margin:2px 0;padding:10px 11px;font-size:12px}
+.nav-group .nav-btn.active{background:#263b5f;color:#fff;box-shadow:inset 3px 0 0 #6f96ff}
+.nav-group .nav-btn.hidden{display:none!important}
+@media(max-width:700px){.nav-group summary{padding:12px}}
+
+.main{min-width:0;flex:1}.topbar{height:76px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 30px;gap:16px}.crumb{font-size:12px;color:var(--muted);margin-bottom:3px}.top-title{font-size:18px;font-weight:800}.top-actions{display:flex;align-items:center;gap:12px}.user-chip{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:700}.avatar{width:36px;height:36px;background:#e7edff;color:#315ac2;border-radius:50%;display:grid;place-items:center;font-weight:800}.content{padding:27px 30px;max-width:1600px;margin:auto}.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:22px}.page-head h1{font-size:25px;margin:0 0 5px;letter-spacing:-.5px}.page-head p{margin:0;color:var(--muted);font-size:13px}.actions{display:flex;gap:8px;flex-wrap:wrap}.grid{display:grid;gap:17px}.stats{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:20px}.stat{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:19px;box-shadow:var(--shadow)}.stat-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px;font-weight:700}.stat-icon{width:35px;height:35px;border-radius:11px;display:grid;place-items:center;font-size:17px}.stat-num{font-size:29px;font-weight:800;letter-spacing:-.7px;margin:13px 0 5px}.stat-foot{font-size:11px;color:var(--muted)}.dashboard-grid{grid-template-columns:1.45fr 1fr;margin-bottom:18px}.panel{background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);min-width:0}.panel-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--line);gap:12px}.panel-head h3{margin:0;font-size:14px}.panel-body{padding:19px 20px}.bar-chart{height:190px;display:flex;align-items:end;gap:12px;padding:10px 3px 0;border-bottom:1px solid var(--line);background:repeating-linear-gradient(to bottom,transparent 0,transparent 46px,#eef1f6 47px)}.bar-group{flex:1;display:flex;align-items:center;justify-content:end;gap:4px;flex-direction:column;height:100%}.bars{height:150px;display:flex;align-items:end;gap:4px;width:100%;justify-content:center}.bar{width:min(24px,40%);border-radius:5px 5px 0 0;min-height:3px}.bar.pos{background:#4b82e7}.bar.neg{background:#ee8b8b}.bar-label{font-size:10px;color:var(--muted);padding:8px 0}.legend{display:flex;gap:14px;font-size:11px;color:var(--muted)}.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px}.activity{display:grid;gap:15px}.activity-item{display:flex;gap:11px;align-items:flex-start}.activity-icon{width:32px;height:32px;flex-shrink:0;border-radius:10px;display:grid;place-items:center}.activity-copy{min-width:0;flex:1;font-size:12px;line-height:1.45}.activity-copy strong{font-size:12px}.activity-copy small{display:block;color:var(--muted);margin-top:3px}.pill{display:inline-flex;align-items:center;border-radius:100px;padding:4px 8px;font-size:10px;font-weight:800;white-space:nowrap}.pill-positive{color:var(--green);background:var(--greenbg)}.pill-negative{color:var(--red);background:var(--redbg)}.pill-blue{color:#168452;background:#e8f7ef}.pill-amber{color:#946200;background:#fff5d9}.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:15px 18px;border-bottom:1px solid var(--line)}.toolbar input{max-width:280px}.toolbar select{width:auto;min-width:130px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;white-space:nowrap}th{text-align:left;color:#7b8799;font-size:10px;text-transform:uppercase;letter-spacing:.6px;font-weight:800;background:#fbfcfe}th,td{padding:13px 18px;border-bottom:1px solid #edf0f5}td{font-size:12px}tbody tr:hover{background:#fafcff}.student-cell{display:flex;align-items:center;gap:9px}.mini-avatar{width:31px;height:31px;border-radius:10px;display:grid;place-items:center;background:#edf1fb;color:#4d64a6;font-size:11px;font-weight:800}.student-name{font-weight:750}.subline{font-size:10px;color:var(--muted);margin-top:3px}.table-foot{display:flex;justify-content:space-between;align-items:center;padding:13px 18px;color:var(--muted);font-size:11px}.two-col{grid-template-columns:1fr 1fr}.level-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.level-option{border:1px solid var(--line);border-radius:11px;background:#fff;padding:11px 4px;text-align:center;cursor:pointer}.level-option strong{display:block;font-size:15px;margin-bottom:5px}.level-option span{display:block;font-size:10px;color:var(--muted)}.level-option.selected{border-color:var(--blue);background:var(--blue2);box-shadow:0 0 0 2px #3767d61a}.level-option.neg-selected{border-color:var(--red);background:#fff0f0;box-shadow:0 0 0 2px #c53b451a}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}.span-2{grid-column:1/-1}.notice{padding:12px 14px;border-radius:10px;background:#f2f6ff;color:#3555a0;font-size:12px;line-height:1.5}.empty{text-align:center;padding:45px 20px;color:var(--muted)}.empty .big{font-size:30px;margin-bottom:8px}.profile-top{display:flex;align-items:center;gap:15px;padding:20px}.profile-avatar{width:66px;height:66px;border-radius:18px;background:#e7edff;color:#315ac2;display:grid;place-items:center;font-size:23px;font-weight:800}.profile-top h2{margin:0 0 5px}.profile-stats{grid-template-columns:repeat(3,1fr)}.toast{position:fixed;bottom:22px;right:22px;background:#172742;color:#fff;border-radius:12px;padding:13px 18px;box-shadow:0 12px 30px #0002;font-size:13px;z-index:50;max-width:360px}.modal-backdrop{position:fixed;inset:0;background:#0b183c77;display:grid;place-items:center;padding:18px;z-index:30}.modal{background:white;border-radius:18px;width:min(680px,100%);max-height:90vh;overflow:auto;box-shadow:0 25px 70px #09152c55}.modal-head{padding:19px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.modal-head h2{font-size:17px;margin:0}.modal-body{padding:18px 22px}.modal-foot{padding:16px 22px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:9px}.close-btn{border:0;background:transparent;font-size:22px;color:var(--muted)}.level-row{display:grid;grid-template-columns:100px 100px 1fr;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.level-row input{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px}.mobile-menu{display:none}
+@media(max-width:1050px){.sidebar{width:210px}.content{padding:22px 18px}.topbar{padding:0 18px}.stats{grid-template-columns:repeat(2,1fr)}.dashboard-grid{grid-template-columns:1fr}}
+@media(max-width:700px){.sidebar{display:none;position:fixed;z-index:20;inset:0 auto 0 0;width:260px}.sidebar.open{display:flex}.mobile-menu{display:inline-flex}.topbar{height:68px;padding:0 14px}.top-title{font-size:15px}.top-actions .user-name{display:none}.content{padding:18px 12px}.page-head{flex-direction:column}.page-head h1{font-size:22px}.stats{gap:10px}.stat{padding:13px}.stat-num{font-size:24px}.stat-top{font-size:10px}.two-col,.form-grid{grid-template-columns:1fr}.span-2{grid-column:auto}.profile-stats{grid-template-columns:1fr}.level-grid{gap:4px}.level-option{padding:10px 2px}.level-option span{font-size:9px}.level-row{grid-template-columns:70px 75px 1fr}.toolbar input{max-width:none;flex:1}.top-actions{gap:7px}}
+
+.alert-card,.notice-card{border-radius:12px;padding:15px 17px;margin:12px 0;border:1px solid var(--line);border-left:5px solid var(--alert-color,#c53b45);background:var(--alert-bg,#fff0f0)}
+.alert-card h3,.notice-card h3{margin:0 0 7px;font-size:15px}.message-meta{font-size:11px;color:var(--muted);margin-top:10px;display:flex;gap:10px;flex-wrap:wrap}.message-body{font-size:13px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}.message-actions{display:flex;gap:7px;align-items:center;margin-top:10px}.message-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}.message-tabs .btn{border-radius:9px}
+
+</style>
+</head>
+<body>
+<div id="loginScreen" class="login-wrap">
+  <form id="loginForm" class="login-card">
+    <div class="brandmark">✦</div>
+    <h1>Welcome back</h1><p class="muted" style="margin:0 0 23px;font-size:13px">Sign in to Arbor MIS</p>
+    <div class="field"><label for="username">Username</label><input id="username" autocomplete="username" required placeholder="Enter your username" value="admin"></div>
+    <div class="field"><label for="password">Password</label><div class="password-row"><input id="password" type="password" autocomplete="current-password" required placeholder="Enter your password" value="School123!"><button class="btn btn-outline" type="button" id="togglePassword">Show</button></div></div>
+    <button class="btn btn-primary full" type="submit" style="margin-top:8px">Log in →</button>
+    <div id="loginError" class="muted" style="color:#c53b45;font-size:12px;margin-top:10px"></div>
+  </form>
+</div>
+
+<div id="app" class="app hidden">
+<aside id="sidebar" class="sidebar">
+  <div class="side-brand"><div class="side-icon">✦</div><div>Arbor MIS<div style="font-size:10px;font-weight:500;color:#9eafca;margin-top:3px">BEHAVIOUR & POINTS</div></div></div>
+  <div class="nav-label">Workspace</div>
+  <button class="nav-btn active" data-page="dashboard"><span class="ico">▦</span>Dashboard</button>
+  <button class="nav-btn" data-page="students"><span class="ico">♙</span>Students</button>
+  <button class="nav-btn" data-page="behaviour"><span class="ico">◉</span>Behaviour log</button>
+  <button class="nav-btn" data-page="award"><span class="ico">＋</span>Award / record points</button>
+  <div class="nav-label">School management</div>
+  <button class="nav-btn" data-page="classes"><span class="ico">▤</span>Classes & year groups</button>
+  <button class="nav-btn" data-page="reports"><span class="ico">▥</span>Reports & analytics</button>
+  <button class="nav-btn" data-page="settings"><span class="ico">⚙</span>Points settings</button>
+  <div class="side-bottom">Arbor MIS <br>OHMS</div>
+</aside>
+<main class="main">
+<header class="topbar">
+  <div style="display:flex;align-items:center;gap:12px"><button class="btn btn-outline mobile-menu" id="mobileMenu">☰</button><div><div class="crumb">School Management / <span id="crumb">Dashboard</span></div><div class="top-title" id="topTitle">Dashboard overview</div></div></div>
+  <div class="top-actions"><button class="btn btn-outline btn-sm" id="headerAward">＋ Award points</button><div class="user-chip"><div class="avatar">AD</div><div class="user-name">Alex Morgan<div class="muted" style="font-size:10px;font-weight:500">Super Admin</div></div></div><button class="btn btn-outline btn-sm" id="logoutBtn">Log out</button></div>
+</header>
+<div id="content" class="content"></div>
+</main>
+</div>
+<div id="modalRoot"></div><div id="toastRoot"></div>
+<script>
+const DEFAULT_LEVELS = {
+ positive:[
+  {name:"Level 1",points:1,description:"Small achievement or positive behaviour"},
+  {name:"Level 2",points:2,description:"Good effort or positive contribution"},
+  {name:"Level 3",points:3,description:"Excellent effort or achievement"},
+  {name:"Level 4",points:5,description:"Outstanding contribution"},
+  {name:"Level 5",points:10,description:"Exceptional achievement or recognition"}
+ ],
+ negative:[
+  {name:"Level 1",points:1,description:"Minor behaviour concern"},
+  {name:"Level 2",points:2,description:"Repeated or more significant concern"},
+  {name:"Level 3",points:3,description:"Serious behaviour incident"},
+  {name:"Level 4",points:5,description:"Major incident requiring senior review - Isolation"},
+  {name:"Level 5",points:10,description:"Critical incident requiring immediate review - Suspension"}
+ ]
+};
+const seedStudents=[
+ {id:"ST1001",first:"William",last:"Holcroft",year:"Year 8",className:"8H",house:"Heywood",status:"Active"},
+ {id:"ST1002",first:"Joseph",last:"McCabe",year:"Year 8",className:"8H",house:"Heywood",status:"Active"},
+ {id:"ST1003",first:"Ethan",last:"Longmore",year:"Year 8",className:"8B",house:"Bamford",status:"Active"},
+ {id:"ST1004",first:"William",last:"Bounds",year:"Year 7",className:"7R",house:"Redfern",status:"Active"},
+ {id:"ST1005",first:"Kyle",last:"Davies",year:"Year 8",className:"8J",house:"Johnson",status:"Active"},
+ {id:"ST1006",first:"George",last:"Gregson",year:"Year 5",className:"5J",house:"Johnson",status:"Active"},
+ {id:"ST1007",first:"Freya",last:"Cleary",year:"Year 8",className:"8H",house:"Heywood",status:"Active"},
+ {id:"ST1008",first:"Rory",last:"McCullagh",year:"Year 8",className:"8H",house:"Heywood",status:"Active"},
+ {id:"ST1009",first:"Douglas",last:"Oldham",year:"Year 8",className:"8H",house:"Heywood",status:"Active"},
+];
+const today=new Date().toISOString().slice(0,10);
+const seedEntries=[
+ 
+];
+let state={students:[],entries:[],levels:DEFAULT_LEVELS,classes:["7A","8B","9C","10A","11A"],years:["Year 7","Year 8","Year 9","Year 10","Year 11"],currentPage:"dashboard",selectedStudent:null,filters:{search:"",type:"all",year:"all",className:"all"}};
+const $=id=>document.getElementById(id);
+function loadData(){try{const s=localStorage.getItem("schoolMISPrototype");if(s){const p=JSON.parse(s);state.students=p.students||seedStudents;state.entries=p.entries||seedEntries;state.levels=p.levels||DEFAULT_LEVELS;state.classes=p.classes||state.classes;state.years=p.years||state.years;}else{state.students=seedStudents;state.entries=seedEntries;state.levels=JSON.parse(JSON.stringify(DEFAULT_LEVELS));saveData();}}catch(e){state.students=seedStudents;state.entries=seedEntries;state.levels=JSON.parse(JSON.stringify(DEFAULT_LEVELS));}}
+function saveData(){localStorage.setItem("schoolMISPrototype",JSON.stringify({students:state.students,entries:state.entries,levels:state.levels,classes:state.classes,years:state.years}));}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function student(id){return state.students.find(s=>s.id===id)||{id,first:"Unknown",last:"student",year:"—",className:"—"};}
+function initials(s){return (s.first[0]||"")+(s.last[0]||"");}
+function totals(id){const es=state.entries.filter(e=>e.studentId===id);const pos=es.filter(e=>e.type==="positive").reduce((a,e)=>a+Number(e.points),0);const neg=es.filter(e=>e.type==="negative").reduce((a,e)=>a+Number(e.points),0);return{pos,neg,net:pos-neg};}
+function allTotals(){return state.students.reduce((a,s)=>{const t=totals(s.id);a.pos+=t.pos;a.neg+=t.neg;return a;},{pos:0,neg:0});}
+function todayEntries(){return state.entries.filter(e=>e.date===today);}
+function showToast(msg){$("toastRoot").innerHTML=`<div class="toast">${esc(msg)}</div>`;setTimeout(()=>$("toastRoot").innerHTML="",3000);}
+const pageTitles={dashboard:"Dashboard overview",students:"Student directory",behaviour:"Behaviour log","award":"Award / record points",classes:"Classes & year groups",reports:"Reports & analytics",settings:"Points settings"};
+function go(page){state.currentPage=page;document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.page===page));$("crumb").textContent=pageTitles[page]||page;$("topTitle").textContent=pageTitles[page]||page;$("sidebar").classList.remove("open");render();}
+function render(){const c=$("content");({dashboard:renderDashboard,students:renderStudents,behaviour:renderBehaviour,award:renderAward,classes:renderClasses,reports:renderReports,settings:renderSettings}[state.currentPage]||renderDashboard)();}
+function pageHead(title,desc,actions=""){return `<div class="page-head"><div><h1>${title}</h1><p>${desc}</p></div><div class="actions">${actions}</div></div>`;}
+function stat(label,num,icon,color,foot){return `<div class="stat"><div class="stat-top">${label}<span class="stat-icon" style="background:${color}">${icon}</span></div><div class="stat-num">${num}</div><div class="stat-foot">${foot}</div></div>`;}
+function entryName(e){const s=student(e.studentId);return `${s.first} ${s.last}`;}
+function entryPill(e){return `<span class="pill ${e.type==="positive"?"pill-positive":"pill-negative"}">${e.type==="positive"?"Positive":"Negative"}</span>`;}
+function entryRows(entries,limit=100){if(!entries.length)return `<tr><td colspan="8"><div class="empty"><div class="big">◌</div>No behaviour entries found.</div></td></tr>`;return entries.slice(0,limit).map(e=>{const s=student(e.studentId);return `<tr><td>${esc(e.date)}</td><td><div class="student-cell"><div class="mini-avatar">${esc(initials(s))}</div><div><div class="student-name">${esc(s.first+" "+s.last)}</div><div class="subline">${esc(s.id)}</div></div></div></td><td>${esc(s.className)}</td><td>${entryPill(e)}</td><td>Level ${e.level}</td><td style="font-weight:800;color:${e.type==="positive"?"var(--green)":"var(--red)"}">${e.type==="positive"?"+":"−"}${e.points}</td><td>${esc(e.reason)}</td><td><button class="btn btn-outline btn-sm" onclick="viewEntry(${e.id})">View</button></td></tr>`;}).join("");}
+function entriesTable(entries,withTools=true){return `<div class="panel"><div class="panel-head"><h3>Behaviour entries</h3><span class="muted" style="font-size:11px">${entries.length} records</span></div>${withTools?`<div class="toolbar"><input id="entrySearch" placeholder="Search student or reason…" value="${esc(state.filters.search)}"><select id="entryType"><option value="all">All categories</option><option value="positive" ${state.filters.type==="positive"?"selected":""}>Positive</option><option value="negative" ${state.filters.type==="negative"?"selected":""}>Negative</option></select><select id="entryYear"><option value="all">All year groups</option>${state.years.map(y=>`<option ${state.filters.year===y?"selected":""}>${esc(y)}</option>`).join("")}</select></div>`:""}<div class="table-wrap"><table><thead><tr><th>Date</th><th>Student</th><th>Class</th><th>Category</th><th>Level</th><th>Points</th><th>Reason</th><th>Action</th></tr></thead><tbody>${entryRows(entries)}</tbody></table></div><div class="table-foot"><span>Showing ${Math.min(entries.length,100)} of ${entries.length} entries</span><button class="btn btn-outline btn-sm" onclick="exportEntries()">Export CSV</button></div></div>`;}
+function filteredEntries(){let q=state.filters.search.toLowerCase();return [...state.entries].filter(e=>{const s=student(e.studentId);return(!q||`${s.first} ${s.last} ${s.id} ${e.reason}`.toLowerCase().includes(q))&&(state.filters.type==="all"||e.type===state.filters.type)&&(state.filters.year==="all"||s.year===state.filters.year);}).sort((a,b)=>(b.date+a.id).localeCompare(a.date+b.id));}
+function bindEntryFilters(){const s=$("entrySearch"),t=$("entryType"),y=$("entryYear");if(s)s.oninput=()=>{state.filters.search=s.value;refreshEntryTable();};if(t)t.onchange=()=>{state.filters.type=t.value;refreshEntryTable();};if(y)y.onchange=()=>{state.filters.year=y.value;refreshEntryTable();};}
+function refreshEntryTable(){const panel=$("content").querySelector(".panel");if(!panel)return;const html=entriesTable(filteredEntries());const wrap=document.createElement("div");wrap.innerHTML=html;panel.replaceWith(wrap.firstElementChild);bindEntryFilters();}
+function renderDashboard(){const tt=allTotals(),todayEs=todayEntries(),posToday=todayEs.filter(e=>e.type==="positive").reduce((a,e)=>a+e.points,0),negToday=todayEs.filter(e=>e.type==="negative").reduce((a,e)=>a+e.points,0);const ranked=[...state.students].map(s=>({...s,...totals(s.id)})).sort((a,b)=>b.pos-a.pos).slice(0,5);const support=state.students.map(s=>({...s,...totals(s.id)})).filter(s=>s.neg>=5).length;const days=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];const bars=days.map((d,i)=>{let dt=new Date();dt.setDate(dt.getDate()-((dt.getDay()+6)%7)+(i));let ds=dt.toISOString().slice(0,10);let es=state.entries.filter(e=>e.date===ds);let p=es.filter(e=>e.type==="positive").reduce((a,e)=>a+e.points,0),n=es.filter(e=>e.type==="negative").reduce((a,e)=>a+e.points,0);return `<div class="bar-group"><div class="bars"><div class="bar pos" style="height:${Math.max(3,Math.min(100,p*8))}%"></div><div class="bar neg" style="height:${Math.max(3,Math.min(100,n*8))}%"></div></div><div class="bar-label">${d}</div></div>`;}).join("");c=$("content");c.innerHTML=pageHead("Good morning, Alex 👋","Here's what's happening across your school today.",`<button class="btn btn-outline" onclick="go('students')">＋ Add student</button><button class="btn btn-primary" onclick="go('award')">＋ Award points</button>`)+`<div class="grid stats">${stat("Total students",state.students.length,"♙","#eaf0ff","Across all active year groups")}${stat("Staff members","24","♧","#e8f7ef","Demo school directory")}${stat("Positive points today",posToday,"↗","#e8f7ef","Awarded so far today")}${stat("Negative points today",negToday,"↘","#fff0f0",`${support} students at review threshold`)}</div><div class="grid dashboard-grid"><section class="panel"><div class="panel-head"><h3>Points activity</h3><div class="legend"><span><i class="dot" style="background:#4b82e7"></i>Positive</span><span><i class="dot" style="background:#ee8b8b"></i>Negative</span></div></div><div class="panel-body"><div class="bar-chart">${bars}</div><div style="display:flex;justify-content:space-between;margin-top:18px;font-size:11px;color:var(--muted)"><span>Weekly overview · points by day</span><strong style="color:var(--text)">Net points: ${tt.pos-tt.neg}</strong></div></div></section><section class="panel"><div class="panel-head"><h3>Recent activity</h3><button class="btn btn-outline btn-sm" onclick="go('behaviour')">View all</button></div><div class="panel-body"><div class="activity">${[...state.entries].sort((a,b)=>b.id-a.id).slice(0,5).map(e=>{const s=student(e.studentId);return `<div class="activity-item"><div class="activity-icon" style="background:${e.type==="positive"?"var(--greenbg)":"var(--redbg)"};color:${e.type==="positive"?"var(--green)":"var(--red)"}">${e.type==="positive"?"↗":"↘"}</div><div class="activity-copy"><strong>${esc(s.first+" "+s.last)}</strong> ${e.type==="positive"?"received positive points":"received negative points"}<small>${esc(e.reason)} · ${e.date}</small></div><span class="pill ${e.type==="positive"?"pill-positive":"pill-negative"}">${e.type==="positive"?"+":"−"}${e.points}</span></div>`;}).join("")}</div></div></section></div><div class="grid two-col"><section class="panel"><div class="panel-head"><h3>Top positive points</h3><button class="btn btn-outline btn-sm" onclick="go('students')">Student directory</button></div><div class="table-wrap"><table><thead><tr><th>Student</th><th>Class</th><th>Positive</th><th>Net</th></tr></thead><tbody>${ranked.map(s=>`<tr><td><div class="student-cell"><div class="mini-avatar">${esc(initials(s))}</div><span class="student-name">${esc(s.first+" "+s.last)}</span></div></td><td>${esc(s.className)}</td><td style="color:var(--green);font-weight:800">+${s.pos}</td><td style="font-weight:800">${s.net}</td></tr>`).join("")}</tbody></table></div></section><section class="panel"><div class="panel-head"><h3>Quick actions</h3></div><div class="panel-body" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><button class="btn btn-outline" style="padding:18px 8px" onclick="go('award')">＋<br><span style="font-size:12px">Award points</span></button><button class="btn btn-outline" style="padding:18px 8px" onclick="openStudentModal()">♙<br><span style="font-size:12px">Add student</span></button><button class="btn btn-outline" style="padding:18px 8px" onclick="go('reports')">▥<br><span style="font-size:12px">View reports</span></button><button class="btn btn-outline" style="padding:18px 8px" onclick="go('settings')">⚙<br><span style="font-size:12px">Points settings</span></button></div></section></div>`;}
+function renderStudents(){const q=state.studentSearch||"";const list=state.students.filter(s=>`${s.first} ${s.last} ${s.id} ${s.className} ${s.year}`.toLowerCase().includes(q.toLowerCase()));$("content").innerHTML=pageHead("Student directory","Manage student records and view their behaviour and achievement history.",`<button class="btn btn-outline" onclick="importStudents()">⇧ Import CSV</button><button class="btn btn-primary" onclick="openStudentModal()">＋ Add student</button>`)+`<div class="panel"><div class="toolbar"><input id="studentSearch" placeholder="Search name, student ID, class…" value="${esc(q)}"><select id="studentYear"><option value="all">All year groups</option>${state.years.map(y=>`<option>${esc(y)}</option>`).join("")}</select><button class="btn btn-outline btn-sm" onclick="exportStudents()">Export CSV</button></div><div class="table-wrap"><table><thead><tr><th>Student</th><th>Student ID</th><th>Year group</th><th>Class</th><th>Positive</th><th>Negative</th><th>Net points</th><th>Status</th><th>Actions</th></tr></thead><tbody id="studentsBody">${list.map(studentRow).join("")||`<tr><td colspan="9"><div class="empty">No students found.</div></td></tr>`}</tbody></table></div><div class="table-foot"><span>${list.length} students</span><span>Local demo data</span></div></div>`;$("studentSearch").oninput=e=>{state.studentSearch=e.target.value;renderStudents();const el=$("studentSearch");el.focus();el.setSelectionRange(el.value.length,el.value.length);};$("studentYear").onchange=e=>{const val=e.target.value;const filtered=state.students.filter(s=>(val==="all"||s.year===val)&&`${s.first} ${s.last} ${s.id} ${s.className}`.toLowerCase().includes(($("studentSearch").value||"").toLowerCase()));$("studentsBody").innerHTML=filtered.map(studentRow).join("")||`<tr><td colspan="9"><div class="empty">No students found.</div></td></tr>`;};}
+function studentRow(s){const t=totals(s.id);return `<tr><td><div class="student-cell"><div class="mini-avatar">${esc(initials(s))}</div><div><div class="student-name">${esc(s.first+" "+s.last)}</div><div class="subline">${esc(s.house||"No house")}</div></div></div></td><td>${esc(s.id)}</td><td>${esc(s.year)}</td><td>${esc(s.className)}</td><td style="color:var(--green);font-weight:800">+${t.pos}</td><td style="color:var(--red);font-weight:800">−${t.neg}</td><td style="font-weight:800">${t.net}</td><td><span class="pill pill-positive">${esc(s.status||"Active")}</span></td><td><button class="btn btn-outline btn-sm" onclick="viewStudent('${s.id}')">Profile</button> <button class="btn btn-outline btn-sm" onclick="openStudentModal('${s.id}')">Edit</button></td></tr>`;}
+function renderBehaviour(){$("content").innerHTML=pageHead("Behaviour log","A complete, searchable history of positive and negative behaviour entries.",`<button class="btn btn-primary" onclick="go('award')">＋ Record entry</button>`)+`<div id="entryPanel">${entriesTable(filteredEntries())}</div>`;bindEntryFilters();}
+function renderAward(){state.awardType=state.awardType||"positive";state.awardLevel=state.awardLevel||1;const isPos=state.awardType==="positive";$("content").innerHTML=pageHead("Award / record points","Record positive achievements and behaviour incidents consistently.")+`<div class="grid two-col"><section class="panel"><div class="panel-head"><h3>New behaviour entry</h3><span class="pill ${isPos?"pill-positive":"pill-negative"}">${isPos?"Positive points":"Negative points"}</span></div><div class="panel-body"><form id="awardForm"><div class="field"><label>Student *</label><select id="awardStudent" required><option value="">Select a student…</option>${state.students.map(s=>`<option value="${s.id}" ${state.awardStudent===s.id?"selected":""}>${esc(s.first+" "+s.last)} · ${esc(s.id)} · ${esc(s.className)}</option>`).join("")}</select></div><div id="studentContext" class="notice" style="margin-bottom:16px">Choose a student to see their year group and class.</div><div class="field"><label>Point category *</label><div class="actions"><button type="button" class="btn ${isPos?"btn-green":"btn-outline"}" id="typePositive">↗ Positive</button><button type="button" class="btn ${!isPos?"btn-red":"btn-outline"}" id="typeNegative">↘ Negative</button></div></div><div class="field"><label>Select level *</label><div class="level-grid" id="levelGrid">${renderLevelOptions()}</div></div><div class="field"><label>Points value</label><input id="awardPoints" type="number" min="1" max="100" required value="${state.levels[state.awardType][state.awardLevel-1].points}"><span class="muted" style="font-size:11px">Default value for the selected level. Admins can configure defaults in Points settings.</span></div><div class="field"><label>Reason *</label><select id="awardReason" required><option value="">Select a reason…</option>${(isPos?["Excellent class participation","Good effort","Outstanding effort","Helpful to others","Positive attitude","Exceptional achievement","Improved attendance","Other achievement"]:["Disruption to learning","Repeated lateness","Failure to follow instructions","Unsafe behaviour","Inappropriate language","Damage to property","Bullying concern","Other behaviour concern"]).map(r=>`<option>${esc(r)}</option>`).join("")}</select></div><div class="field"><label>Staff comment ${isPos?"(optional)":"(recommended)"}</label><textarea id="awardNote" rows="3" placeholder="Add relevant context or follow-up information…"></textarea></div><div class="form-grid"><div class="field"><label>Date *</label><input type="date" id="awardDate" value="${today}" required></div><div class="field"><label>Recorded by *</label><input id="awardStaff" value="Alex Morgan" required></div><div class="field span-2"><label>Follow-up status</label><select id="awardStatus"><option>Recorded</option><option>For review</option><option>Follow-up required</option><option>Awaiting approval</option></select></div></div><div id="negativeNotice" class="notice ${isPos?"hidden":""}" style="margin-bottom:15px">Negative entries are retained in the behaviour history. Level 4–5 incidents should be reviewed by authorised staff according to school policy.</div><button class="btn btn-primary full" type="submit">Save behaviour entry</button></form></div></section><section><div class="panel"><div class="panel-head"><h3>Student points summary</h3></div><div class="panel-body" id="awardSummary"><div class="empty"><div class="big">♙</div>Select a student to view their current totals.</div></div></div><div class="panel" style="margin-top:17px"><div class="panel-head"><h3>Level guide</h3></div><div class="panel-body"><div style="display:grid;gap:12px">${[1,2,3,4,5].map(n=>`<div style="display:flex;align-items:flex-start;gap:10px"><div class="mini-avatar" style="background:${isPos?"var(--greenbg)":"var(--redbg)"};color:${isPos?"var(--green)":"var(--red)"}">L${n}</div><div style="font-size:12px"><strong>${esc(state.levels[state.awardType][n-1].name)} · ${state.levels[state.awardType][n-1].points} point${state.levels[state.awardType][n-1].points===1?"":"s"}</strong><div class="muted" style="margin-top:3px">${esc(state.levels[state.awardType][n-1].description)}</div></div></div>`).join("")}</div></div></div></section></div>`;const st=$("awardStudent");st.onchange=()=>{state.awardStudent=st.value;updateAwardSummary();};$("typePositive").onclick=()=>{state.awardType="positive";renderAward();};$("typeNegative").onclick=()=>{state.awardType="negative";renderAward();};document.querySelectorAll(".level-option").forEach(b=>b.onclick=()=>{state.awardLevel=Number(b.dataset.level);renderAward();});$("awardForm").onsubmit=submitAward;if(state.awardStudent){st.value=state.awardStudent;updateAwardSummary();}}
+function renderLevelOptions(){return [1,2,3,4,5].map(n=>{const l=state.levels[state.awardType][n-1],sel=state.awardLevel===n;return `<button type="button" class="level-option ${sel?(state.awardType==="positive"?"selected":"neg-selected"):""}" data-level="${n}"><strong>${n}</strong><span>${l.points} point${l.points===1?"":"s"}</span></button>`;}).join("");}
+function updateAwardSummary(){const s=student(state.awardStudent);if(!s.id||!state.students.some(x=>x.id===s.id))return;$("studentContext").innerHTML=`<strong>${esc(s.year)} · ${esc(s.className)}</strong><br>${esc(s.first+" "+s.last)} · ${esc(s.id)}`;const t=totals(s.id);$("awardSummary").innerHTML=`<div class="student-cell" style="margin-bottom:20px"><div class="profile-avatar">${esc(initials(s))}</div><div><strong>${esc(s.first+" "+s.last)}</strong><div class="muted" style="font-size:12px;margin-top:4px">${esc(s.year)} · ${esc(s.className)}</div></div></div><div class="grid profile-stats">${stat("Positive",t.pos,"↗","#e8f7ef","Total positive points")}${stat("Negative",t.neg,"↘","#fff0f0","Total negative points")}${stat("Net points",t.net,"∑","#eaf0ff","Positive minus negative")}</div><h4 style="font-size:12px;margin:22px 0 12px">Recent history</h4><div class="activity">${state.entries.filter(e=>e.studentId===s.id).sort((a,b)=>b.id-a.id).slice(0,4).map(e=>`<div class="activity-item"><div class="activity-icon" style="background:${e.type==="positive"?"var(--greenbg)":"var(--redbg)"}">${e.type==="positive"?"↗":"↘"}</div><div class="activity-copy"><strong>${esc(e.reason)}</strong><small>Level ${e.level} · ${e.date}</small></div><span class="pill ${e.type==="positive"?"pill-positive":"pill-negative"}">${e.type==="positive"?"+":"−"}${e.points}</span></div>`).join("")||`<span class="muted" style="font-size:12px">No history yet.</span>`}</div>`;}
+function submitAward(ev){ev.preventDefault();const sid=$("awardStudent").value,reason=$("awardReason").value,points=Number($("awardPoints").value);if(!sid||!reason||!points||points<1){showToast("Please complete all required fields.");return;}const type=state.awardType,level=state.awardLevel;if(type==="negative"&&!confirm(`Record ${points} negative point(s) for ${student(sid).first} ${student(sid).last}? This will be added to their behaviour history.`))return;const e={id:Date.now(),studentId:sid,type,level,points,reason,note:$("awardNote").value.trim(),staff:$("awardStaff").value.trim(),date:$("awardDate").value,status:$("awardStatus").value};state.entries.push(e);saveData();showToast("Behaviour entry saved successfully.");state.awardStudent=sid;renderAward();updateAwardSummary();}
+function renderClasses(){$("content").innerHTML=pageHead("Classes & year groups","View and manage the class groups used throughout the MIS.",`<button class="btn btn-primary" onclick="openClassModal()">＋ Add class</button>`)+`<div class="grid stats">${stat("Year groups",state.years.length,"▤","#eaf0ff","Configured year groups")}${stat("Classes",state.classes.length,"▦","#e8f7ef","Tutor and teaching groups")}${stat("Students assigned",state.students.length,"♙","#fff5d9","Across listed classes")}${stat("Houses",new Set(state.students.map(s=>s.house).filter(Boolean)).size,"♧","#f0eaff","Student house groups")}</div><div class="panel"><div class="panel-head"><h3>Class directory</h3></div><div class="table-wrap"><table><thead><tr><th>Class</th><th>Year group</th><th>Students</th><th>Assigned students</th><th>Actions</th></tr></thead><tbody>${state.classes.map(c=>{let year=state.students.find(s=>s.className===c)?.year||"Not assigned";let count=state.students.filter(s=>s.className===c).length;return `<tr><td><strong>${esc(c)}</strong></td><td>${esc(year)}</td><td>${count}</td><td><div style="width:150px;height:6px;background:#edf1f7;border-radius:10px;overflow:hidden"><div style="height:100%;background:var(--blue);width:${Math.min(100,count*12)}%"></div></div></td><td><button class="btn btn-outline btn-sm" onclick="showClassStudents('${esc(c)}')">View students</button></td></tr>`;}).join("")}</tbody></table></div></div><div class="notice" style="margin-top:15px">This prototype stores class assignments locally. Production deployments should connect these records to a secure shared database and permission system.</div>`;}
+function renderReports(){const t=allTotals(),positive=state.entries.filter(e=>e.type==="positive").length,negative=state.entries.filter(e=>e.type==="negative").length;const levelRows=[1,2,3,4,5].map(n=>{let p=state.entries.filter(e=>e.type==="positive"&&e.level===n).length,neg=state.entries.filter(e=>e.type==="negative"&&e.level===n).length;return `<tr><td>Level ${n}</td><td>${p}</td><td>${neg}</td><td>${p+neg}</td></tr>`;}).join("");$("content").innerHTML=pageHead("Reports & analytics","Explore points distribution and export a snapshot of your school's demo data.",`<button class="btn btn-outline" onclick="exportEntries()">⇩ Export behaviour CSV</button><button class="btn btn-primary" onclick="window.print()">Print report</button>`)+`<div class="grid stats">${stat("Positive points",t.pos,"↗","#e8f7ef",`${positive} positive entries`)}${stat("Negative points",t.neg,"↘","#fff0f0",`${negative} negative entries`)}${stat("Net points",t.pos-t.neg,"∑","#eaf0ff","Positive minus negative")}${stat("Review flagged",state.entries.filter(e=>e.status!=="Recorded").length,"!","#fff5d9","Entries needing attention")}</div><div class="grid two-col"><div class="panel"><div class="panel-head"><h3>Points by level</h3></div><div class="table-wrap"><table><thead><tr><th>Level</th><th>Positive entries</th><th>Negative entries</th><th>Total</th></tr></thead><tbody>${levelRows}</tbody></table></div></div><div class="panel"><div class="panel-head"><h3>Students reaching review threshold</h3></div><div class="table-wrap"><table><thead><tr><th>Student</th><th>Class</th><th>Negative total</th></tr></thead><tbody>${state.students.map(s=>({...s,...totals(s.id)})).filter(s=>s.neg>=5).sort((a,b)=>b.neg-a.neg).map(s=>`<tr><td>${esc(s.first+" "+s.last)}</td><td>${esc(s.className)}</td><td><span class="pill pill-negative">${s.neg} points</span></td></tr>`).join("")||`<tr><td colspan="3" class="muted">No students currently meet the demo threshold (5 negative points).</td></tr>`}</tbody></table></div></div></div><div class="panel" style="margin-top:17px"><div class="panel-head"><h3>Student points summary</h3><button class="btn btn-outline btn-sm" onclick="exportStudents()">Export student CSV</button></div><div class="table-wrap"><table><thead><tr><th>Student</th><th>Class</th><th>Positive</th><th>Negative</th><th>Net</th></tr></thead><tbody>${state.students.map(s=>{let x=totals(s.id);return `<tr><td>${esc(s.first+" "+s.last)}</td><td>${esc(s.className)}</td><td style="color:var(--green)">+${x.pos}</td><td style="color:var(--red)">−${x.neg}</td><td><strong>${x.net}</strong></td></tr>`;}).join("")}</tbody></table></div></div>`;}
+function renderSettings(){$("content").innerHTML=pageHead("Points settings","Configure point values and descriptions for all ten behaviour levels.")+`<div class="notice" style="margin-bottom:17px">Changes apply to future entries. Existing behaviour entries retain the points originally recorded. Level 4–5 negative entries should trigger human review according to your school policy.</div><div class="grid two-col">${["positive","negative"].map(type=>`<section class="panel"><div class="panel-head"><h3>${type==="positive"?"↗ Positive points":"↘ Negative points"}</h3><span class="pill ${type==="positive"?"pill-positive":"pill-negative"}">5 levels</span></div><div class="panel-body"><div class="level-row" style="font-size:10px;font-weight:800;color:var(--muted)"><span>LEVEL</span><span>POINTS</span><span>DESCRIPTION</span></div>${state.levels[type].map((l,i)=>`<div class="level-row"><strong>${esc(l.name)}</strong><input type="number" min="1" max="100" id="${type}Points${i+1}" value="${l.points}" aria-label="${type} level ${i+1} points"><input id="${type}Desc${i+1}" value="${esc(l.description)}" aria-label="${type} level ${i+1} description"></div>`).join("")}</div></section>`).join("")}</div><div style="display:flex;justify-content:flex-end;gap:9px;margin-top:17px"><button class="btn btn-outline" onclick="resetLevels()">Reset defaults</button><button class="btn btn-primary" onclick="saveLevels()">Save points settings</button></div><div class="panel" style="margin-top:18px"><div class="panel-head"><h3>Data management</h3></div><div class="panel-body" style="display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap"><div><strong style="font-size:13px">Local demo data</strong><p class="muted" style="font-size:12px;margin:5px 0 0">Data is stored in this browser on this device only.</p></div><button class="btn btn-red" onclick="resetDemo()">Reset all demo data</button></div></div>`;}
+function saveLevels(){["positive","negative"].forEach(type=>state.levels[type].forEach((l,i)=>{let p=Number($(`${type}Points${i+1}`).value);l.points=Math.max(1,Math.min(100,p||1));l.description=$(`${type}Desc${i+1}`).value.trim()||l.description;}));saveData();showToast("Points settings saved.");renderSettings();}
+function resetLevels(){if(!confirm("Reset point values and descriptions to defaults?"))return;state.levels=JSON.parse(JSON.stringify(DEFAULT_LEVELS));saveData();renderSettings();showToast("Default levels restored.");}
+function resetDemo(){if(!confirm("Reset all local demo students and behaviour entries? This cannot be undone."))return;localStorage.removeItem("schoolMISPrototype");state.students=JSON.parse(JSON.stringify(seedStudents));state.entries=JSON.parse(JSON.stringify(seedEntries));state.levels=JSON.parse(JSON.stringify(DEFAULT_LEVELS));state.classes=["7A","8B","9C","10A","11A"];state.years=["Year 7","Year 8","Year 9","Year 10","Year 11"];saveData();showToast("Demo data reset.");render();}
+function openModal(title,body,foot){$("modalRoot").innerHTML=`<div class="modal-backdrop" id="modalBackdrop"><div class="modal"><div class="modal-head"><h2>${title}</h2><button class="close-btn" onclick="closeModal()">×</button></div><div class="modal-body">${body}</div>${foot?`<div class="modal-foot">${foot}</div>`:""}</div></div>`;$("modalBackdrop").onclick=e=>{if(e.target.id==="modalBackdrop")closeModal();};}
+function closeModal(){$("modalRoot").innerHTML="";}
+function openStudentModal(id=""){const s=state.students.find(x=>x.id===id)||{id:"",first:"",last:"",year:state.years[0],className:state.classes[0],house:"Oak",status:"Active"};openModal(id?"Edit student":"Add student",`<form id="studentForm"><div class="form-grid"><div class="field"><label>Student ID *</label><input id="sId" required value="${esc(s.id)}" ${id?"readonly":""} placeholder="e.g. ST1009"></div><div class="field"><label>Status</label><select id="sStatus"><option ${s.status==="Active"?"selected":""}>Active</option><option ${s.status==="Archived"?"selected":""}>Archived</option></select></div><div class="field"><label>First name *</label><input id="sFirst" required value="${esc(s.first)}"></div><div class="field"><label>Surname *</label><input id="sLast" required value="${esc(s.last)}"></div><div class="field"><label>Year group *</label><select id="sYear">${state.years.map(y=>`<option ${s.year===y?"selected":""}>${esc(y)}</option>`).join("")}</select></div><div class="field"><label>Class *</label><select id="sClass">${state.classes.map(c=>`<option ${s.className===c?"selected":""}>${esc(c)}</option>`).join("")}</select></div><div class="field span-2"><label>House / team</label><input id="sHouse" value="${esc(s.house||"")}" placeholder="e.g. Oak"></div></div></form>`,`<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveStudent('${esc(id)}')">Save student</button>`);}
+function saveStudent(oldId){const id=$("sId").value.trim();if(!id||!$("sFirst").value.trim()||!$("sLast").value.trim())return showToast("Complete the required student fields.");if(!oldId&&state.students.some(s=>s.id===id))return showToast("That student ID already exists.");const s={id,first:$("sFirst").value.trim(),last:$("sLast").value.trim(),year:$("sYear").value,className:$("sClass").value,house:$("sHouse").value.trim(),status:$("sStatus").value};if(oldId){const i=state.students.findIndex(x=>x.id===oldId);state.students[i]=s;}else state.students.push(s);saveData();closeModal();showToast(oldId?"Student updated.":"Student added.");renderStudents();}
+function viewStudent(id){const s=student(id),t=totals(id),es=state.entries.filter(e=>e.studentId===id).sort((a,b)=>b.id-a.id);state.selectedStudent=id;openModal("Student profile",`<div class="profile-top" style="padding:0 0 20px"><div class="profile-avatar">${esc(initials(s))}</div><div><h2>${esc(s.first+" "+s.last)}</h2><div class="muted" style="font-size:12px">${esc(s.id)} · ${esc(s.year)} · ${esc(s.className)} · ${esc(s.house||"No house")}</div></div></div><div class="grid profile-stats" style="margin-bottom:20px">${stat("Positive",t.pos,"↗","#e8f7ef","Positive points")}${stat("Negative",t.neg,"↘","#fff0f0","Negative points")}${stat("Net points",t.net,"∑","#eaf0ff","Net total")}</div><h3 style="font-size:13px">Behaviour history</h3><div class="table-wrap"><table><thead><tr><th>Date</th><th>Category</th><th>Level</th><th>Points</th><th>Reason</th></tr></thead><tbody>${es.map(e=>`<tr><td>${e.date}</td><td>${entryPill(e)}</td><td>${e.level}</td><td>${e.type==="positive"?"+":"−"}${e.points}</td><td>${esc(e.reason)}</td></tr>`).join("")||`<tr><td colspan="5" class="muted">No behaviour history.</td></tr>`}</tbody></table></div>`,`<button class="btn btn-outline" onclick="closeModal()">Close</button><button class="btn btn-primary" onclick="closeModal();state.awardStudent='${id}';go('award')">＋ Award / record points</button>`);}
+function viewEntry(id){const e=state.entries.find(x=>x.id===id);if(!e)return;const s=student(e.studentId);openModal("Behaviour entry",`<div class="grid two-col"><div><div class="muted" style="font-size:11px">STUDENT</div><strong>${esc(s.first+" "+s.last)}</strong><div class="subline">${esc(s.id)} · ${esc(s.className)}</div></div><div><div class="muted" style="font-size:11px">DATE</div><strong>${esc(e.date)}</strong></div><div><div class="muted" style="font-size:11px">CATEGORY & LEVEL</div><p>${entryPill(e)} <strong>Level ${e.level}</strong></p></div><div><div class="muted" style="font-size:11px">POINTS</div><strong style="font-size:24px;color:${e.type==="positive"?"var(--green)":"var(--red)"}">${e.type==="positive"?"+":"−"}${e.points}</strong></div></div><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><div class="field"><label>Reason</label><div>${esc(e.reason)}</div></div><div class="field"><label>Staff comment</label><div>${esc(e.note||"No comment provided.")}</div></div><div class="field"><label>Recorded by</label><div>${esc(e.staff)}</div></div><div class="field"><label>Follow-up status</label><div>${esc(e.status)}</div></div><div class="notice">Audit note: this demo does not provide a tamper-resistant audit log. Production records need server-side audit controls.</div>`,`<button class="btn btn-outline" onclick="closeModal()">Close</button><button class="btn btn-outline" onclick="amendEntry(${e.id})">Amend entry</button>`);}
+function amendEntry(id){const e=state.entries.find(x=>x.id===id);if(!e)return;openModal("Amend behaviour entry",`<div class="notice" style="margin-bottom:14px">In a live school system, amendments should preserve the original entry and record who changed it and why.</div><div class="field"><label>Reason</label><input id="amendReason" value="${esc(e.reason)}"></div><div class="field"><label>Staff comment</label><textarea id="amendNote" rows="3">${esc(e.note||"")}</textarea></div><div class="field"><label>Amendment reason *</label><input id="amendWhy" required placeholder="Explain why this correction is needed"></div>`,`<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveAmendment(${id})">Save correction</button>`);}
+function saveAmendment(id){const why=$("amendWhy").value.trim();if(!why)return showToast("Please provide a reason for the correction.");const e=state.entries.find(x=>x.id===id);e.reason=$("amendReason").value.trim();e.note=$("amendNote").value.trim()+`\n[Correction reason: ${why}]`;saveData();closeModal();showToast("Entry corrected in this demo.");renderBehaviour();}
+function openClassModal(){openModal("Add class",`<div class="field"><label>Class name *</label><input id="newClass" placeholder="e.g. 7B"></div><div class="field"><label>Year group *</label><select id="newYear">${state.years.map(y=>`<option>${esc(y)}</option>`).join("")}</select></div>`,`<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveClass()">Add class</button>`);}
+function saveClass(){const c=$("newClass").value.trim(),y=$("newYear").value;if(!c)return showToast("Enter a class name.");if(state.classes.includes(c))return showToast("That class already exists.");state.classes.push(c);if(!state.years.includes(y))state.years.push(y);saveData();closeModal();showToast("Class added.");renderClasses();}
+function showClassStudents(c){const list=state.students.filter(s=>s.className===c);openModal(`Students in ${c}`,`<div class="table-wrap"><table><thead><tr><th>Student</th><th>Year group</th><th>Net points</th></tr></thead><tbody>${list.map(s=>`<tr><td>${esc(s.first+" "+s.last)}</td><td>${esc(s.year)}</td><td>${totals(s.id).net}</td></tr>`).join("")||`<tr><td colspan="3">No students assigned.</td></tr>`}</tbody></table></div>` ,`<button class="btn btn-outline" onclick="closeModal()">Close</button>`);}
+function downloadCSV(name,rows){const csv=rows.map(row=>row.map(v=>`"${String(v??"").replace(/"/g,'""')}"`).join(",")).join("\r\n");const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"});const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);showToast("CSV export created.");}
+function exportEntries(){downloadCSV("school-mis-behaviour-log.csv",[["Date","Student","Student ID","Year group","Class","Category","Level","Points","Reason","Comment","Staff","Status"],...filteredEntries().map(e=>{const s=student(e.studentId);return[e.date,s.first+" "+s.last,s.id,s.year,s.className,e.type,e.level,e.points,e.reason,e.note,e.staff,e.status];})]);}
+function exportStudents(){downloadCSV("school-mis-students.csv",[["Student ID","First name","Surname","Year group","Class","House","Positive points","Negative points","Net points","Status"],...state.students.map(s=>{const t=totals(s.id);return[s.id,s.first,s.last,s.year,s.className,s.house,t.pos,t.neg,t.net,s.status];})]);}
+function importStudents(){openModal("Import students from CSV",`<p class="muted" style="font-size:12px">Choose a CSV file with columns: Student ID, First name, Surname, Year group, Class, House. Import only data you are authorised to use.</p><div class="field"><label>CSV file</label><input type="file" id="csvFile" accept=".csv,text/csv"></div><div class="notice">This simple demo importer supports comma-separated files without embedded commas in quoted fields.</div>`,`<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="processImport()">Import records</button>`);}
+function processImport(){const f=$("csvFile").files[0];if(!f)return showToast("Choose a CSV file first.");const r=new FileReader();r.onload=()=>{const lines=String(r.result).split(/\r?\n/).filter(Boolean);let count=0;lines.slice(1).forEach(line=>{const a=line.split(",").map(x=>x.trim().replace(/^"|"$/g,""));if(a.length<5||!a[0]||state.students.some(s=>s.id===a[0]))return;state.students.push({id:a[0],first:a[1]||"",last:a[2]||"",year:a[3]||state.years[0],className:a[4]||state.classes[0],house:a[5]||"",status:"Active"});if(!state.classes.includes(a[4]))state.classes.push(a[4]);count++;});saveData();closeModal();showToast(`${count} student(s) imported.`);renderStudents();};r.readAsText(f);}
+
+// Extended school workspace: role accounts, attendance, lessons, assignments and sanctions.
+state.accounts=[]; state.attendance=[]; state.lessons=[]; state.assignments=[]; state.currentUser=null;
+const originalLoadData=loadData, originalSaveData=saveData;
+loadData=function(){
+  originalLoadData();
+  try{
+    const raw=JSON.parse(localStorage.getItem("schoolMISPrototype")||"{}");
+    state.accounts=Array.isArray(raw.accounts)?raw.accounts:[];
+    // Always keep working demo accounts, even if older or empty browser data exists.
+    const adminAccount=state.accounts.find(a=>String(a.username||"").trim().toLowerCase()==="admin");
+    if(adminAccount){
+      adminAccount.username="admin";
+      adminAccount.password="School123!";
+      adminAccount.role="Admin";
+      adminAccount.name=adminAccount.name||"Alex Morgan";
+      adminAccount.studentId="";
+    } else {
+      state.accounts.unshift({username:"admin",password:"School123!",role:"Admin",name:"Alex Morgan",studentId:""});
+    }
+    // Provide a dedicated teacher demo login; preserve all other teacher accounts.
+    const teacherAccount=state.accounts.find(a=>String(a.username||"").trim().toLowerCase()==="teacher");
+    if(teacherAccount){
+      teacherAccount.username="teacher";
+      teacherAccount.password="Teacher123!";
+      teacherAccount.role="Teacher";
+      teacherAccount.name=teacherAccount.name||"Jamie Taylor";
+      teacherAccount.studentId="";
+    } else {
+      state.accounts.push({username:"teacher",password:"Teacher123!",role:"Teacher",name:"Jamie Taylor",studentId:""});
+    }
+    state.attendance=raw.attendance||[];
+    state.lessons=raw.lessons||[
+      {id:1,title:"Introduction to algebra",subject:"Maths",className:"7A",teacher:"Jamie Taylor",date:today,details:"Solve one-step equations."},
+      {id:2,title:"Reading and inference",subject:"English",className:"8B",teacher:"Sam Green",date:today,details:"Read the extract and answer the questions."}
+    ];
+    state.assignments=raw.assignments||[];
+  }catch(e){state.accounts=[{username:"admin",password:"School123!",role:"Admin",name:"Alex Morgan",studentId:""}];state.attendance=[];state.lessons=[];state.assignments=[];}
+  state.students.forEach(st=>{
+    if(!state.accounts.some(a=>a.studentId===st.id))
+      state.accounts.push({username:st.id.toLowerCase(),password:"Student123!",role:"Student",name:st.first+" "+st.last,studentId:st.id});
+  });
+  // Persist the repaired account list so the demo login remains available on reload.
+  try { saveData(); } catch(e) { console.warn("Could not persist demo accounts:", e); }
+};
+saveData=function(){
+  originalSaveData();
+  const raw=JSON.parse(localStorage.getItem("schoolMISPrototype")||"{}");
+  Object.assign(raw,{accounts:state.accounts,attendance:state.attendance,lessons:state.lessons,assignments:state.assignments});
+  localStorage.setItem("schoolMISPrototype",JSON.stringify(raw));
+};
+const staffRole=()=>state.currentUser&&["Admin","Teacher","Staff"].includes(state.currentUser.role);
+const isAdmin=()=>state.currentUser&&state.currentUser.role==="Admin";
+const currentStudent=()=>state.currentUser?.studentId?student(state.currentUser.studentId):null;
+function addNav(label,page,ico){if(!document.querySelector(`.nav-btn[data-page="${page}"]`)){const b=document.createElement("button");b.className="nav-btn";b.dataset.page=page;b.innerHTML=`<span class="ico">${ico}</span>${label}`;b.onclick=()=>go(page);const nav=document.querySelector(".side-bottom");nav.parentElement.insertBefore(b,nav);}}
+function setupRoleNav(){
+  addNav("Attendance","attendance","✓");addNav("Lessons & assignments","learning","▣");
+  if(isAdmin())addNav("Users & roles","users","♙");
+  document.querySelectorAll('.nav-btn[data-page="students"],.nav-btn[data-page="behaviour"],.nav-btn[data-page="award"],.nav-btn[data-page="classes"],.nav-btn[data-page="reports"],.nav-btn[data-page="settings"]').forEach(b=>b.classList.toggle("hidden",!staffRole()));
+  document.querySelectorAll('.nav-btn[data-page="users"]').forEach(b=>b.classList.toggle("hidden",!isAdmin()));
+  $("headerAward").classList.toggle("hidden",!staffRole());
+  const u=state.currentUser||{name:"Guest",role:""};
+  document.querySelector(".user-chip").innerHTML=`<div class="avatar">${esc((u.name||"U").split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase())}</div><div class="user-name">${esc(u.name)}<div class="muted" style="font-size:10px;font-weight:500">${esc(u.role)}</div></div>`;
+}
+function render(){
+  if(!staffRole()){
+    if(state.currentPage==="attendance")return renderAttendance();
+    if(state.currentPage==="learning")return renderLearning();
+    return renderStudentHome();
+  }
+  if(state.currentPage==="attendance")return renderAttendance();
+  if(state.currentPage==="learning")return renderLearning();
+  if(state.currentPage==="users")return renderUsers();
+  return ({dashboard:renderDashboard,students:renderStudents,behaviour:renderBehaviour,award:renderAward,classes:renderClasses,reports:renderReports,settings:renderSettings}[state.currentPage]||renderDashboard)();
+}
+function renderStudentHome(){
+ const s=currentStudent(); if(!s){$("content").innerHTML=pageHead("Student view","Your student account is not linked to a student record.");return;}
+ const t=totals(s.id),todayAtt=state.attendance.filter(a=>a.studentId===s.id),present=todayAtt.filter(a=>a.status==="Present").length,attPct=todayAtt.length?Math.round(present/todayAtt.length*100):0;
+ const assignments=state.assignments.filter(a=>a.studentId===s.id||a.className===s.className);
+ const dayKey=today+"-"+s.id;let timetable=state.timetableCache?.[dayKey];
+ if(!timetable){const pool=[["Maths","Jamie Taylor"],["English","Sam Green"],["Science","Priya Shah"],["History","Alex Morgan"],["PE","Jordan Lee"],["Art","Casey Brown"],["Computing","Jamie Taylor"],["Geography","Sam Green"]];const shuffled=[...pool].sort(()=>Math.random()-.5).slice(0,5);timetable=shuffled.map((x,i)=>({time:["09:00","10:00","11:20","12:20","14:00"][i],subject:x[0],teacher:x[1]}));state.timetableCache=state.timetableCache||{};state.timetableCache[dayKey]=timetable;saveData();}
+ $("content").innerHTML=pageHead(`Hello, ${esc(s.first)} 👋`,"Your school day at a glance.")+
+ `<div class="grid stats">${stat("Attendance",todayAtt.length?attPct+"%":"—","✓","#e8f7ef",todayAtt.length+" recorded sessions")}${stat("Positive points",t.pos,"↗","#e8f7ef","Awards and achievements")}${stat("Negative points",t.neg,"↘","#fff0f0","Behaviour points")}${stat("Assignments",assignments.filter(a=>!a.completed).length,"▣","#eaf0ff","Still to complete")}</div>
+ <div class="grid two-col"><section class="panel"><div class="panel-head"><h3>Today's timetable</h3><span class="pill pill-blue">Randomised demo</span></div><div class="table-wrap"><table><thead><tr><th>Time</th><th>Lesson</th><th>Teacher</th></tr></thead><tbody>${timetable.map(x=>`<tr><td>${x.time}</td><td><strong>${esc(x.subject)}</strong></td><td>${esc(x.teacher)}</td></tr>`).join("")}</tbody></table></div></section>
+ <section class="panel"><div class="panel-head"><h3>My assignments</h3></div><div class="panel-body">${assignments.map(a=>`<div class="activity-item" style="margin-bottom:13px"><div class="activity-icon" style="background:#eaf0ff">▣</div><div class="activity-copy"><strong>${esc(a.title)}</strong><small>Due ${esc(a.dueDate||"No due date")} · ${esc(a.comment||"No comment")}</small></div><span class="pill ${a.completed?"pill-positive":"pill-amber"}">${a.completed?"Completed":"To do"}</span></div>`).join("")||'<div class="empty">No assignments yet.</div>'}</div></section></div>
+ <div class="panel" style="margin-top:17px"><div class="panel-head"><h3>Recent attendance</h3></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Status</th><th>Comment</th></tr></thead><tbody>${todayAtt.slice(-10).reverse().map(a=>`<tr><td>${esc(a.date)}</td><td><span class="pill ${a.status==="Present"?"pill-positive":a.status==="Absent"?"pill-negative":"pill-amber"}">${esc(a.status)}</span></td><td>${esc(a.comment||"—")}</td></tr>`).join("")||'<tr><td colspan="3">No attendance recorded yet.</td></tr>'}</tbody></table></div></div>`;
+}
+function renderAttendance(){
+ const classFilter=state.attendanceClass||"all";
+ const students=staffRole()?state.students.filter(s=>s.status!=="Expelled"&&(classFilter==="all"||s.className===classFilter)):state.students.filter(s=>s.id===state.currentUser?.studentId);
+ const rows=students.map(s=>{const a=state.attendance.find(x=>x.studentId===s.id&&x.date===today);const shown=a?(a.status==="Late"?`Late${a.minutesLate!=null?` · ${a.minutesLate} min`:""}`:a.status):"Not recorded";return `<tr><td>${esc(s.first+" "+s.last)}</td><td>${esc(s.year)} · ${esc(s.className)}</td><td><span class="pill ${a?.status==="Present"?"pill-positive":a?.status==="Absent"?"pill-negative":a?.status==="Late"?"pill-amber":"pill-blue"}">${esc(shown)}</span></td>${staffRole()?`<td><select id="att-${esc(s.id)}" data-minutes="${a?.minutesLate??""}" onchange="attendanceStatusChanged('${esc(s.id)}')"><option ${a?.status==="Present"?"selected":""}>Present</option><option ${a?.status==="Absent"?"selected":""}>Absent</option><option ${a?.status==="Late"?"selected":""}>Late</option></select></td><td><input id="attnote-${esc(s.id)}" placeholder="Comment" value="${esc(a?.comment||"")}"></td>`:`<td>${esc(a?.comment||"—")}</td>`}</tr>`;}).join("");
+ $("content").innerHTML=pageHead(staffRole()?"Take class register":"My attendance",staffRole()?"Choose a class from the dropdown, mark each student present, absent or late, then save the register.":"Your recorded attendance history.",staffRole()?`<button class="btn btn-primary" onclick="saveAttendance()">Save register</button>`:"")+
+ `<div class="panel"><div class="toolbar">${staffRole()?`<label for="attendanceClass">Class register</label><select id="attendanceClass"><option value="all" ${classFilter==="all"?"selected":""}>All classes / whole school</option>${state.classes.map(c=>`<option value="${esc(c)}" ${classFilter===c?"selected":""}>${esc(c)}</option>`).join("")}</select>`:""}<strong>${today}</strong><span class="muted">${staffRole()?students.length+" students":"Attendance record"}</span></div><div class="table-wrap"><table><thead><tr><th>Student</th><th>Class</th><th>Current status</th>${staffRole()?"<th>Set status</th><th>Comment</th>":"<th>Comment</th>"}</tr></thead><tbody>${rows||'<tr><td colspan="5">No student records in this class.</td></tr>'}</tbody></table></div></div>`;
+ const filter=$("attendanceClass");if(filter)filter.onchange=()=>{state.attendanceClass=filter.value;renderAttendance();};
+}
+function attendanceStatusChanged(id){
+ const el=$("att-"+id);if(!el)return;
+ if(el.value==="Late"){
+   let minutes=prompt("How many minutes late is the student?",el.dataset.minutes||"5");
+   if(minutes===null){el.value="Present";el.dataset.minutes="";return;}
+   minutes=Number(minutes);
+   if(!Number.isFinite(minutes)||minutes<1||!Number.isInteger(minutes)){showToast("Enter a whole number of minutes greater than zero.");el.value="Present";el.dataset.minutes="";return;}
+   el.dataset.minutes=String(minutes);
+ }else el.dataset.minutes="";
+}
+function saveAttendance(){
+ if(!staffRole())return;
+ const classFilter=state.attendanceClass||"all";
+ state.students.filter(s=>s.status!=="Expelled"&&(classFilter==="all"||s.className===classFilter)).forEach(s=>{
+   const el=$("att-"+s.id);if(!el)return;
+   let a=state.attendance.find(x=>x.studentId===s.id&&x.date===today);
+   if(!a){a={studentId:s.id,date:today};state.attendance.push(a);}
+   a.status=el.value;a.minutesLate=el.value==="Late"?Number(el.dataset.minutes||0):null;
+   a.comment=$("attnote-"+s.id).value.trim();a.recordedBy=state.currentUser.name;
+ });
+ saveData();showToast("Class register saved.");renderAttendance();
+}
+function renderLearning(){
+ const mine=staffRole()?state.assignments:state.assignments.filter(a=>a.studentId===state.currentUser?.studentId||a.className===currentStudent()?.className);
+ $("content").innerHTML=pageHead(staffRole()?"Lessons & assignments":"Lessons & assignments",staffRole()?"Add lessons and assignments, then track completion.":"View your lessons and assignment deadlines.",staffRole()?`<button class="btn btn-outline" onclick="openLessonModal()">＋ Add lesson</button><button class="btn btn-primary" onclick="openAssignmentModal()">＋ Add assignment</button>`:"")+
+ (staffRole()?`<div class="panel" style="margin-bottom:17px"><div class="panel-head"><h3>Lessons</h3></div><div class="table-wrap"><table><thead><tr><th>Lesson</th><th>Subject</th><th>Class</th><th>Teacher</th><th>Date</th><th>Details</th></tr></thead><tbody>${state.lessons.map(l=>`<tr><td>${esc(l.title)}</td><td>${esc(l.subject)}</td><td>${esc(l.className)}</td><td>${esc(l.teacher)}</td><td>${esc(l.date)}</td><td>${esc(l.details||"—")}</td></tr>`).join("")||'<tr><td colspan="6">No lessons added.</td></tr>'}</tbody></table></div></div>`:"")+
+ `<div class="panel"><div class="panel-head"><h3>Assignments</h3><span class="muted">${mine.length} items</span></div><div class="table-wrap"><table><thead><tr><th>Assignment</th><th>Class / student</th><th>Due date</th><th>Comment</th><th>Status</th>${staffRole()?"<th>Update</th>":""}</tr></thead><tbody>${mine.map(a=>`<tr><td><strong>${esc(a.title)}</strong></td><td>${esc(a.className||student(a.studentId).first+" "+student(a.studentId).last)}</td><td>${esc(a.dueDate||"—")}</td><td>${esc(a.comment||"—")}</td><td><span class="pill ${a.completed?"pill-positive":"pill-amber"}">${a.completed?"Completed":"Not completed"}</span></td>${staffRole()?`<td><button class="btn btn-sm ${a.completed?"btn-outline":"btn-green"}" onclick="toggleAssignment(${a.id})">${a.completed?"Mark not done":"Mark completed"}</button></td>`:""}</tr>`).join("")||`<tr><td colspan="${staffRole()?6:5}">No assignments yet.</td></tr>`}</tbody></table></div></div>`;
+}
+function openLessonModal(){openModal("Add lesson",`<div class="form-grid"><div class="field"><label>Lesson title *</label><input id="lTitle" required></div><div class="field"><label>Subject *</label><input id="lSubject" required></div><div class="field"><label>Class *</label><select id="lClass">${state.classes.map(c=>`<option>${esc(c)}</option>`).join("")}</select></div><div class="field"><label>Teacher</label><input id="lTeacher" value="${esc(state.currentUser.name)}"></div><div class="field"><label>Date</label><input id="lDate" type="date" value="${today}"></div><div class="field span-2"><label>Lesson details</label><textarea id="lDetails"></textarea></div></div>`,`<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveLesson()">Save lesson</button>`);}
+function saveLesson(){const title=$("lTitle").value.trim(),subject=$("lSubject").value.trim();if(!title||!subject)return showToast("Enter a lesson title and subject.");state.lessons.push({id:Date.now(),title,subject,className:$("lClass").value,teacher:$("lTeacher").value.trim(),date:$("lDate").value,details:$("lDetails").value.trim()});saveData();closeModal();renderLearning();showToast("Lesson added.");}
+function openAssignmentModal(){openModal("Add assignment",`<div class="form-grid"><div class="field span-2"><label>Assignment title *</label><input id="aTitle" required></div><div class="field"><label>Assign to class</label><select id="aClass"><option value="">Individual student instead</option>${state.classes.map(c=>`<option>${esc(c)}</option>`).join("")}</select></div><div class="field"><label>Individual student (optional)</label><select id="aStudent"><option value="">No individual student</option>${state.students.map(s=>`<option value="${esc(s.id)}">${esc(s.first+" "+s.last)} · ${esc(s.id)}</option>`).join("")}</select></div><div class="field"><label>Due date</label><input id="aDue" type="date"></div><div class="field span-2"><label>Comment / instructions</label><textarea id="aComment" rows="3"></textarea></div></div>`,`<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveAssignment()">Create assignment</button>`);}
+function saveAssignment(){const title=$("aTitle").value.trim();if(!title)return showToast("Enter an assignment title.");const className=$("aClass").value,studentId=$("aStudent").value;if(!className&&!studentId)return showToast("Choose a class or an individual student.");state.assignments.push({id:Date.now(),title,className,studentId,dueDate:$("aDue").value,comment:$("aComment").value.trim(),completed:false,createdBy:state.currentUser.name});saveData();closeModal();renderLearning();showToast("Assignment created.");}
+function toggleAssignment(id){if(!staffRole())return;const a=state.assignments.find(x=>x.id===id);if(a){a.completed=!a.completed;saveData();renderLearning();}}
+function renderUsers(){
+ $("content").innerHTML=pageHead("Users & roles","Create individual accounts with unique usernames and passwords. Admin access required.",`<button class="btn btn-primary" onclick="openUserModal()">＋ Add user</button>`)+
+ `<div class="notice" style="margin-bottom:16px">Prototype limitation: accounts and passwords are stored in this browser only and are not secure authentication. Do not use real pupil data or real passwords here. A production MIS needs server-side accounts, hashed passwords, access controls and audit logs.</div><div class="panel"><div class="table-wrap"><table><thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Linked student</th><th>Actions</th></tr></thead><tbody>${state.accounts.map((a,i)=>`<tr><td>${esc(a.name)}</td><td>${esc(a.username)}</td><td><span class="pill pill-blue">${esc(a.role)}</span></td><td>${esc(a.studentId||"—")}</td><td>${a.username!=="admin"?`<button class="btn btn-outline btn-sm" onclick="resetUserPassword(${i})">Reset password</button> <button class="btn btn-red btn-sm" onclick="deleteUser(${i})">Remove</button>`:"Built-in demo admin"}</td></tr>`).join("")}</tbody></table></div></div>`;
+}
+function openUserModal(){openModal("Add account",`<div class="form-grid"><div class="field"><label>Full name *</label><input id="uName" required></div><div class="field"><label>Username *</label><input id="uUsername" required></div><div class="field"><label>Password *</label><input id="uPassword" type="password" required minlength="6"></div><div class="field"><label>Role *</label><select id="uRole"><option>Teacher</option><option>Staff</option><option>Admin</option><option>Student</option></select></div><div class="field span-2"><label>Link student record (for student role)</label><select id="uStudent"><option value="">No linked student</option>${state.students.map(s=>`<option value="${esc(s.id)}">${esc(s.first+" "+s.last)} · ${esc(s.id)}</option>`).join("")}</select></div></div>`,`<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveUser()">Create account</button>`);}
+function saveUser(){const name=$("uName").value.trim(),username=$("uUsername").value.trim(),password=$("uPassword").value,role=$("uRole").value,studentId=$("uStudent").value;if(!name||!username||password.length<6)return showToast("Enter a name, username and password of at least 6 characters.");if(state.accounts.some(a=>a.username.toLowerCase()===username.toLowerCase()))return showToast("That username is already in use.");if(role==="Student"&&!studentId)return showToast("Link a student record for student accounts.");if(studentId&&state.accounts.some(a=>a.studentId===studentId))return showToast("That student already has a linked account.");state.accounts.push({name,username,password,role,studentId});saveData();closeModal();renderUsers();showToast("Account created.");}
+function resetUserPassword(i){const p=prompt("Enter a new password (at least 6 characters):");if(!p)return;if(p.length<6)return showToast("Password must be at least 6 characters.");state.accounts[i].password=p;saveData();showToast("Password reset.");}
+function deleteUser(i){if(!isAdmin()||!confirm("Remove this account?"))return;state.accounts.splice(i,1);saveData();renderUsers();showToast("Account removed.");}
+function manageStudentStatus(id,status){if(!isAdmin())return showToast("Only an admin can suspend or expel students.");const s=student(id);if(!confirm(`Set ${s.first} ${s.last} to ${status}? This will restrict their student login.`))return;s.status=status;saveData();showToast(`Student status updated: ${status}.`);renderStudents();}
+const originalStudentRow=studentRow;
+studentRow=function(s){const t=totals(s.id);return `<tr><td><div class="student-cell"><div class="mini-avatar">${esc(initials(s))}</div><div><div class="student-name">${esc(s.first+" "+s.last)}</div><div class="subline">${esc(s.house||"No house")}</div></div></div></td><td>${esc(s.id)}</td><td>${esc(s.year)}</td><td>${esc(s.className)}</td><td style="color:var(--green);font-weight:800">+${t.pos}</td><td style="color:var(--red);font-weight:800">−${t.neg}</td><td style="font-weight:800">${t.net}</td><td><span class="pill ${s.status==="Active"?"pill-positive":"pill-negative"}">${esc(s.status||"Active")}</span></td><td><button class="btn btn-outline btn-sm" onclick="viewStudent('${s.id}')">Profile</button> <button class="btn btn-outline btn-sm" onclick="openStudentModal('${s.id}')">Edit</button> ${isAdmin()?`<button class="btn btn-outline btn-sm" onclick="manageStudentStatus('${s.id}','Suspended')">Suspend</button> <button class="btn btn-red btn-sm" onclick="manageStudentStatus('${s.id}','Expelled')">Expel</button> ${s.status!=="Active"?`<button class="btn btn-green btn-sm" onclick="manageStudentStatus('${s.id}','Active')">Reinstate</button>`:""}`:""}</td></tr>`;}
+$("loginForm").addEventListener("submit",e=>{e.preventDefault();const u=$("username").value.trim(),p=$("password").value.trim();const account=state.accounts.find(a=>String(a.username||"").trim().toLowerCase()===u.toLowerCase()&&String(a.password??"").trim()===p);if(!account){$("loginError").textContent="Incorrect username or password.";return;}if(account.studentId){const st=student(account.studentId);if(st.status==="Suspended"||st.status==="Expelled"){ $("loginError").textContent=`This account is ${st.status.toLowerCase()}. Please contact the school office.`;return;}}state.currentUser=account;sessionStorage.setItem("schoolMISLoggedIn",account.username);$("loginScreen").classList.add("hidden");$("app").classList.remove("hidden");loadData();state.currentUser=state.accounts.find(a=>a.username===account.username)||account;setupRoleNav();go(staffRole()?"dashboard":"studenthome");});
+$("togglePassword").onclick=()=>{const p=$("password");p.type=p.type==="password"?"text":"password";$("togglePassword").textContent=p.type==="password"?"Show":"Hide";};
+$("logoutBtn").onclick=()=>{sessionStorage.removeItem("schoolMISLoggedIn");state.currentUser=null;$("app").classList.add("hidden");$("loginScreen").classList.remove("hidden");$("password").value="";};
+$("headerAward").onclick=()=>go("award");$("mobileMenu").onclick=()=>$("sidebar").classList.toggle("open");
+document.querySelectorAll(".nav-btn").forEach(b=>b.addEventListener("click",()=>go(b.dataset.page)));
+
+
+// Requested enhancements: point detail visibility, button-based attendance, private notes and individual timetables.
+function timetableText(st){
+ const tt=st.timetable||{};return ["Monday","Tuesday","Wednesday","Thursday","Friday"].map(day=>`${day}\n${(tt[day]||[]).map(x=>`${x.time||""} | ${x.subject||""} | ${x.teacher||""}`).join("\n")}`).join("\n\n");
+}
+function parseTimetableText(value){
+ const out={};let day="Monday";out[day]=[];
+ value.split(/\r?\n/).forEach(line=>{const t=line.trim();if(!t)return;const d=t.match(/^(Monday|Tuesday|Wednesday|Thursday|Friday)$/i);if(d){day=d[1][0].toUpperCase()+d[1].slice(1).toLowerCase();out[day]=out[day]||[];return;}const parts=t.split("|").map(x=>x.trim());if(parts.length>=2&&(parts[0]||parts[1]))out[day].push({time:parts[0],subject:parts[1],teacher:parts.slice(2).join(" | ")});});return out;
+}
+function viewStudent(id){
+ const s=student(id),t=totals(id),es=state.entries.filter(e=>e.studentId===id).sort((a,b)=>(b.date||"").localeCompare(a.date||"")||b.id-a.id);
+ state.selectedStudent=id;
+ const history=es.map(e=>`<tr><td>${esc(e.date)}</td><td>${entryPill(e)}</td><td>Level ${esc(e.level)}</td><td style="font-weight:800;color:${e.type==="positive"?"var(--green)":"var(--red)"}">${e.type==="positive"?"+":"−"}${esc(e.points)}</td><td>${esc(e.reason)}</td><td>${esc(e.note||"—")}</td><td>${esc(e.staff||"—")}</td><td><button class="btn btn-outline btn-sm" onclick="viewEntry(${e.id})">Details</button></td></tr>`).join("")||'<tr><td colspan="8">No behaviour history.</td></tr>';
+ const canEdit=staffRole();
+ const timetable=canEdit?`<div class="field"><label>Individual timetable (one lesson per line: time | subject | teacher; add weekday headings)</label><textarea id="profileTimetable" rows="12" placeholder="Monday\n09:00 | Maths | Jamie Taylor\n10:00 | English | Sam Green\n\nTuesday\n09:00 | Science | Priya Shah">${esc(timetableText(s))}</textarea><span class="muted" style="font-size:11px">Edit this student's timetable independently. Use Monday–Friday headings and one lesson per line.</span></div>`:`<div class="table-wrap"><table><thead><tr><th>Day</th><th>Time</th><th>Subject</th><th>Teacher</th></tr></thead><tbody>${["Monday","Tuesday","Wednesday","Thursday","Friday"].flatMap(day=>(s.timetable?.[day]||[]).map(x=>`<tr><td>${day}</td><td>${esc(x.time)}</td><td>${esc(x.subject)}</td><td>${esc(x.teacher||"—")}</td></tr>`)).join("")||'<tr><td colspan="4">No timetable set.</td></tr>'}</tbody></table></div>`;
+ openModal("Student profile",`<div class="profile-top" style="padding:0 0 20px"><div class="profile-avatar">${esc(initials(s))}</div><div><h2>${esc(s.first+" "+s.last)}</h2><div class="muted" style="font-size:12px">${esc(s.id)} · ${esc(s.year)} · ${esc(s.className)} · ${esc(s.house||"No house")}</div></div></div><div class="grid profile-stats" style="margin-bottom:20px">${stat("Reward points",t.pos,"↗","#e8f7ef","Total positive points")}${stat("Negative points",t.neg,"↘","#fff0f0","Total negative points")}${stat("Net points",t.net,"∑","#eaf0ff","Reward minus negative")}</div><h3 style="font-size:13px">Reward and negative point details</h3><div class="table-wrap"><table><thead><tr><th>Date</th><th>Category</th><th>Level</th><th>Points</th><th>Reason</th><th>Staff comment</th><th>Recorded by</th><th>Details</th></tr></thead><tbody>${history}</tbody></table></div><hr style="border:0;border-top:1px solid var(--line);margin:20px 0"><h3 style="font-size:14px">Staff notes ${canEdit?"(Admin / Staff only)":""}</h3>${canEdit?`<div class="field"><textarea id="profileNotes" rows="4" placeholder="Private staff notes for this student">${esc(s.notes||"")}</textarea></div>`:`<div class="notice">Staff notes are private and are not available in student accounts.</div>`}<hr style="border:0;border-top:1px solid var(--line);margin:20px 0"><h3 style="font-size:14px">Individual timetable</h3>${timetable}`,`<button class="btn btn-outline" onclick="closeModal()">Close</button>${canEdit?`<button class="btn btn-primary" onclick="saveStudentProfile('${esc(id)}')">Save notes & timetable</button>`:""}<button class="btn btn-outline" onclick="closeModal();state.awardStudent='${esc(id)}';go('award')">＋ Record points</button>`);
+}
+function saveStudentProfile(id){if(!staffRole())return showToast("Staff access required.");const s=student(id);s.notes=$("profileNotes")?.value.trim()||"";const raw=$("profileTimetable")?.value;if(raw!==undefined)s.timetable=parseTimetableText(raw);saveData();closeModal();showToast("Student notes and timetable saved.");}
+function renderStudentHome(){
+ const s=currentStudent();if(!s){$("content").innerHTML=pageHead("Student view","Your student account is not linked to a student record.");return;}
+ const t=totals(s.id),att=state.attendance.filter(a=>a.studentId===s.id),present=att.filter(a=>a.status==="Present").length,attPct=att.length?Math.round(present/att.length*100):0;
+ const assignments=state.assignments.filter(a=>a.studentId===s.id||(!a.studentId&&a.className===s.className));
+ const history=state.entries.filter(e=>e.studentId===s.id).sort((a,b)=>(b.date||"").localeCompare(a.date||"")||b.id-a.id);
+ const dayNames=["Monday","Tuesday","Wednesday","Thursday","Friday"];
+ const tt=dayNames.flatMap(day=>(s.timetable?.[day]||[]).map(x=>({...x,day}))).map(x=>`<tr><td>${esc(x.day)}</td><td>${esc(x.time)}</td><td><strong>${esc(x.subject)}</strong></td><td>${esc(x.teacher||"—")}</td></tr>`).join("");
+ $("content").innerHTML=pageHead(`Hello, ${esc(s.first)} 👋`,"Your timetable, achievements and behaviour record.")+`<div class="grid stats">${stat("Attendance",att.length?attPct+"%":"—","✓","#e8f7ef",att.length+" recorded sessions")}${stat("Reward points",t.pos,"↗","#e8f7ef","Positive awards and achievements")}${stat("Negative points",t.neg,"↘","#fff0f0","Behaviour points")}${stat("Net points",t.net,"∑","#eaf0ff","Reward minus negative")}</div><div class="grid two-col"><section class="panel"><div class="panel-head"><h3>My timetable</h3></div><div class="table-wrap"><table><thead><tr><th>Day</th><th>Time</th><th>Lesson</th><th>Teacher</th></tr></thead><tbody>${tt||'<tr><td colspan="4">Your timetable has not been set yet. Please ask school staff.</td></tr>'}</tbody></table></div></section><section class="panel"><div class="panel-head"><h3>My assignments</h3></div><div class="panel-body">${assignments.map(a=>`<div class="activity-item" style="margin-bottom:13px"><div class="activity-icon" style="background:#eaf0ff">▣</div><div class="activity-copy"><strong>${esc(a.title)}</strong><small>Due ${esc(a.dueDate||"No due date")} · ${esc(a.comment||"No comment")}</small></div><span class="pill ${a.completed?"pill-positive":"pill-amber"}">${a.completed?"Completed":"To do"}</span></div>`).join("")||'<div class="empty">No assignments yet.</div>'}</div></section></div><div class="panel" style="margin-top:17px"><div class="panel-head"><h3>Reward points history</h3><span class="pill pill-positive">+${t.pos} total</span></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Level</th><th>Points</th><th>Reason</th><th>Staff comment</th><th>Recorded by</th></tr></thead><tbody>${history.filter(e=>e.type==="positive").map(e=>`<tr><td>${esc(e.date)}</td><td>${esc(e.level)}</td><td style="color:var(--green);font-weight:800">+${esc(e.points)}</td><td>${esc(e.reason)}</td><td>${esc(e.note||"—")}</td><td>${esc(e.staff||"—")}</td></tr>`).join("")||'<tr><td colspan="6">No reward points recorded.</td></tr>'}</tbody></table></div></div><div class="panel" style="margin-top:17px"><div class="panel-head"><h3>Negative points history</h3><span class="pill pill-negative">−${t.neg} total</span></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Level</th><th>Points</th><th>Reason</th><th>Staff comment</th><th>Recorded by</th><th>Follow-up</th></tr></thead><tbody>${history.filter(e=>e.type==="negative").map(e=>`<tr><td>${esc(e.date)}</td><td>${esc(e.level)}</td><td style="color:var(--red);font-weight:800">−${esc(e.points)}</td><td>${esc(e.reason)}</td><td>${esc(e.note||"—")}</td><td>${esc(e.staff||"—")}</td><td>${esc(e.status||"Recorded")}</td></tr>`).join("")||'<tr><td colspan="7">No negative points recorded.</td></tr>'}</tbody></table></div></div><div class="panel" style="margin-top:17px"><div class="panel-head"><h3>My attendance</h3></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Status</th><th>Comment</th></tr></thead><tbody>${att.slice().sort((a,b)=>(b.date||"").localeCompare(a.date||"")).map(a=>`<tr><td>${esc(a.date)}</td><td>${esc(a.status)}${a.status==="Late"&&a.minutesLate?` · ${a.minutesLate} min`:""}</td><td>${esc(a.comment||"—")}</td></tr>`).join("")||'<tr><td colspan="3">No attendance recorded yet.</td></tr>'}</tbody></table></div></div>`;
+}
+function renderAttendance(){
+ const classFilter=state.attendanceClass||"all";const students=staffRole()?state.students.filter(s=>s.status!=="Expelled"&&(classFilter==="all"||s.className===classFilter)):state.students.filter(s=>s.id===state.currentUser?.studentId);
+ const rows=students.map(s=>{const a=state.attendance.find(x=>x.studentId===s.id&&x.date===today),status=a?.status||"";const shown=a?(a.status==="Late"?`Late${a.minutesLate!=null?` · ${a.minutesLate} min`:""}`:a.status):"Not recorded";return `<tr><td>${esc(s.first+" "+s.last)}</td><td>${esc(s.year)} · ${esc(s.className)}</td><td><span class="pill ${status==="Present"?"pill-positive":status==="Absent"?"pill-negative":status==="Late"?"pill-amber":"pill-blue"}">${esc(shown)}</span></td>${staffRole()?`<td><div class="actions"><button type="button" class="btn btn-sm ${status==="Present"?"btn-green":"btn-outline"}" onclick="setAttendanceChoice('${esc(s.id)}','Present')">Present</button><button type="button" class="btn btn-sm ${status==="Absent"?"btn-red":"btn-outline"}" onclick="setAttendanceChoice('${esc(s.id)}','Absent')">Absent</button><button type="button" class="btn btn-sm ${status==="Late"?"btn-primary":"btn-outline"}" onclick="setAttendanceChoice('${esc(s.id)}','Late')">Late</button></div><input type="hidden" id="att-${esc(s.id)}" value="${esc(status)}" data-minutes="${a?.minutesLate??""}"></td><td><input id="attnote-${esc(s.id)}" placeholder="Comment" value="${esc(a?.comment||"")}"></td>`:`<td>${esc(a?.comment||"—")}</td>`}</tr>`;}).join("");
+ $("content").innerHTML=pageHead(staffRole()?"Take class register":"My attendance",staffRole()?"Mark each student present, absent or late, then save the register.":"Your recorded attendance history.",staffRole()?`<button class="btn btn-primary" onclick="saveAttendance()">Save register</button>`:"")+`<div class="panel"><div class="toolbar">${staffRole()?`<label for="attendanceClass">Class register</label><select id="attendanceClass"><option value="all" ${classFilter==="all"?"selected":""}>All classes / whole school</option>${state.classes.map(c=>`<option value="${esc(c)}" ${classFilter===c?"selected":""}>${esc(c)}</option>`).join("")}</select>`:""}<strong>${today}</strong><span class="muted">${staffRole()?students.length+" students":"Attendance record"}</span></div><div class="table-wrap"><table><thead><tr><th>Student</th><th>Class</th><th>Current status</th>${staffRole()?"<th>Set status</th><th>Comment</th>":"<th>Comment</th>"}</tr></thead><tbody>${rows||'<tr><td colspan="5">No student records in this class.</td></tr>'}</tbody></table></div></div>`;
+ const filter=$("attendanceClass");if(filter)filter.onchange=()=>{state.attendanceClass=filter.value;renderAttendance();};
+}
+function setAttendanceChoice(id,status){const el=$("att-"+id);if(!el)return;let minutes="";if(status==="Late"){const prior=el.dataset.minutes||"5";minutes=prompt("How many minutes late is the student?",prior);if(minutes===null)return;minutes=Number(minutes);if(!Number.isInteger(minutes)||minutes<1){showToast("Enter a whole number of minutes greater than zero.");return;}el.dataset.minutes=String(minutes);}else el.dataset.minutes="";el.value=status;renderAttendancePreservingChoices();}
+function renderAttendancePreservingChoices(){const fields=[...document.querySelectorAll('input[id^="att-"]')].filter(x=>x.type==="hidden").map(x=>({id:x.id.slice(4),status:x.value,minutes:x.dataset.minutes,comment:$("attnote-"+x.id.slice(4))?.value||""}));const map=Object.fromEntries(fields.map(x=>[x.id,x]));renderAttendance();Object.values(map).forEach(x=>{const el=$("att-"+x.id),note=$("attnote-"+x.id);if(el){el.value=x.status;el.dataset.minutes=x.minutes||"";}if(note)note.value=x.comment;});
+ // Re-render the selected button styles to match the selected hidden value.
+ Object.values(map).forEach(x=>{const el=$("att-"+x.id);if(!el)return;const cell=el.parentElement;[...cell.querySelectorAll("button")].forEach(b=>{const active=b.textContent.trim()===x.status;b.className="btn btn-sm "+(active?(x.status==="Present"?"btn-green":x.status==="Absent"?"btn-red":"btn-primary"):"btn-outline");});const row=el.closest("tr"),pill=row?.querySelector("td:nth-child(3) .pill");if(pill){pill.textContent=x.status?(x.status==="Late"?`Late${x.minutes?` · ${x.minutes} min`:""}`:x.status):"Not recorded";pill.className="pill "+(x.status==="Present"?"pill-positive":x.status==="Absent"?"pill-negative":x.status==="Late"?"pill-amber":"pill-blue");}});
+}
+function saveAttendance(){if(!staffRole())return;const classFilter=state.attendanceClass||"all";state.students.filter(s=>s.status!=="Expelled"&&(classFilter==="all"||s.className===classFilter)).forEach(s=>{const el=$("att-"+s.id);if(!el)return;let a=state.attendance.find(x=>x.studentId===s.id&&x.date===today);if(!a){a={studentId:s.id,date:today};state.attendance.push(a);}a.status=el.value;a.minutesLate=el.value==="Late"?Number(el.dataset.minutes||5):null;a.comment=$("attnote-"+s.id)?.value.trim()||"";a.recordedBy=state.currentUser.name;});saveData();showToast("Class register saved.");renderAttendance();}
+
+
+// School-wide alerts and notice board.
+const _misLoadWithMessages=loadData;
+loadData=function(){_misLoadWithMessages();try{const d=JSON.parse(localStorage.getItem("schoolMISPrototype")||"{}");state.alerts=Array.isArray(d.alerts)?d.alerts:[];state.notices=Array.isArray(d.notices)?d.notices:[];}catch(e){state.alerts=[];state.notices=[];}};
+const _misSaveWithMessages=saveData;
+saveData=function(){_misSaveWithMessages();try{const d=JSON.parse(localStorage.getItem("schoolMISPrototype")||"{}");d.alerts=state.alerts||[];d.notices=state.notices||[];localStorage.setItem("schoolMISPrototype",JSON.stringify(d));}catch(e){console.warn("Could not save messages",e);}};
+const _misSetupRoleNav=setupRoleNav;
+setupRoleNav=function(){_misSetupRoleNav();addNav("Alerts","alerts","⚠");addNav("Notice board","noticeboard","▤");document.querySelectorAll('.nav-btn[data-page="alerts"]').forEach(b=>b.classList.toggle("hidden",!staffRole()&& !state.currentUser));};
+const _misRender=render;
+render=function(){if(state.currentPage==="alerts")return renderAlerts();if(state.currentPage==="noticeboard")return renderNoticeBoard();return _misRender();};
+function canSendAlert(){return !!state.currentUser&&["Admin","Staff"].includes(state.currentUser.role);}
+function canSendNotice(){return !!state.currentUser&&["Admin","Teacher","Staff"].includes(state.currentUser.role);}
+function alertStyle(a){if(a.color)return {fg:a.color,bg:a.color+"18"};if(Number(a.category)===1)return {fg:"#a66a00",bg:"#fff3cf"};return {fg:"#c53b45",bg:"#fff0f0"};}
+function messageCard(m,type){const isAlert=type==="alert",st=isAlert?alertStyle(m):{fg:m.color||"#25804b",bg:m.color?m.color+"18":"#e9f8ef"};const removable=isAdmin()||m.createdBy===state.currentUser?.name;return `<article class="${isAlert?"alert-card":"notice-card"}" style="--alert-color:${esc(st.fg)};--alert-bg:${esc(st.bg)}"><div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start"><div><h3>${esc(m.title)}</h3>${isAlert?`<span class="pill" style="background:${esc(st.bg)};color:${esc(st.fg)}">Alert · Category ${esc(m.category)}</span>`:`<span class="pill" style="background:${esc(st.bg)};color:${esc(st.fg)}">Notice board</span>`}</div>${removable?`<button class="btn btn-outline btn-sm" onclick="deleteSchoolMessage('${type}',${Number(m.id)})">Delete</button>`:""}</div><div class="message-body" style="margin-top:10px">${esc(m.body)}</div><div class="message-meta"><span>Posted by ${esc(m.createdBy||"School")}</span><span>${esc(m.createdAt||"")}</span>${m.expires?`<span>Until ${esc(m.expires)}</span>`:""}</div></article>`;}
+function renderAlerts(){const studentView=!staffRole();const visible=(state.alerts||[]).filter(a=>!studentView||[4,5].includes(Number(a.category))).filter(a=>!a.expires||a.expires>=today).sort((a,b)=>(b.createdAt||"").localeCompare(a.createdAt||""));const form=canSendAlert()?`<div class="panel" style="margin-bottom:18px"><div class="panel-head"><h3>Send a school-wide alert</h3></div><div class="panel-body"><div class="form-grid"><div class="field"><label>Alert title *</label><input id="alertTitle" maxlength="120" placeholder="e.g. Site closure update"></div><div class="field"><label>Category *</label><select id="alertCategory"><option value="1">Category 1 — amber, staff only</option><option value="2">Category 2 — red, staff only</option><option value="3">Category 3 — red, staff only</option><option value="4">Category 4 — red, students can see</option><option value="5">Category 5 — red, students can see</option></select></div><div class="field span-2"><label>Message *</label><textarea id="alertBody" rows="4" maxlength="3000" placeholder="Write the alert for the school…"></textarea></div><div class="field"><label>Expiry date (optional)</label><input id="alertExpiry" type="date" min="${today}"></div><div class="field"><label>Colour</label><select id="alertColorMode" onchange="$('alertCustomColor').disabled=this.value!=='custom'"><option value="default">Use category colour</option><option value="custom">Custom colour</option></select></div><div class="field"><label>Custom colour</label><input id="alertCustomColor" type="color" value="#c53b45" disabled></div></div><button class="btn btn-primary" onclick="sendSchoolAlert()">Publish alert</button></div></div>`:"";$('content').innerHTML=pageHead("School-wide alerts",studentView?"Important alerts for students. Only categories 4 and 5 are shown here.":"Alerts for staff and students. Categories 1–3 are staff-only; categories 4–5 are visible to students.",canSendAlert()?"<button class=\"btn btn-outline\" onclick=\"$('alertTitle')?.focus()\">＋ New alert</button>":"")+form+`<div class="panel"><div class="panel-head"><h3>${studentView?"Student alerts":"All active alerts"}</h3><span class="muted" style="font-size:11px">${visible.length} alert${visible.length===1?"":"s"}</span></div><div class="panel-body">${visible.map(m=>messageCard(m,"alert")).join("")||'<div class="empty"><div class="big">⚑</div>No alerts to show.</div>'}</div></div>`;}
+function sendSchoolAlert(){if(!canSendAlert())return showToast("Only Admins and Staff can send alerts.");const title=$('alertTitle').value.trim(),body=$('alertBody').value.trim(),category=Number($('alertCategory').value),mode=$('alertColorMode').value;let color="";if(mode==="custom")color=$('alertCustomColor').value;if(!title||!body)return showToast("Enter an alert title and message.");const expires=$('alertExpiry').value;if(expires&&expires<today)return showToast("Expiry date cannot be in the past.");state.alerts.unshift({id:Date.now(),title,body,category,color,expires,createdBy:state.currentUser.name,createdAt:new Date().toLocaleString()});saveData();showToast("School-wide alert published.");renderAlerts();}
+function renderNoticeBoard(){const form=canSendNotice()?`<div class="panel" style="margin-bottom:18px"><div class="panel-head"><h3>Post to the notice board</h3></div><div class="panel-body"><div class="form-grid"><div class="field span-2"><label>Notice title *</label><input id="noticeTitle" maxlength="120" placeholder="e.g. Sports day information"></div><div class="field span-2"><label>Notice *</label><textarea id="noticeBody" rows="4" maxlength="3000" placeholder="Write a notice for students…"></textarea></div><div class="field"><label>Expiry date (optional)</label><input id="noticeExpiry" type="date" min="${today}"></div><div class="field"><label>Colour</label><select id="noticeColorMode" onchange="$('noticeCustomColor').disabled=this.value!=='custom'"><option value="default">Green (default)</option><option value="custom">Custom colour</option></select></div><div class="field"><label>Custom colour</label><input id="noticeCustomColor" type="color" value="#25804b" disabled></div></div><button class="btn btn-primary" onclick="sendSchoolNotice()">Publish notice</button></div></div>`:"";const visible=(state.notices||[]).filter(n=>!n.expires||n.expires>=today).sort((a,b)=>(b.createdAt||"").localeCompare(a.createdAt||""));$('content').innerHTML=pageHead("Notice board","School news, reminders and information for students.")+form+`<div class="panel"><div class="panel-head"><h3>Notices</h3><span class="muted" style="font-size:11px">${visible.length} notice${visible.length===1?"":"s"}</span></div><div class="panel-body">${visible.map(m=>messageCard(m,"notice")).join("")||'<div class="empty"><div class="big">▤</div>No notices have been posted.</div>'}</div></div>`;}
+function sendSchoolNotice(){if(!canSendNotice())return showToast("Teacher or staff access required to post notices.");const title=$('noticeTitle').value.trim(),body=$('noticeBody').value.trim(),mode=$('noticeColorMode').value;let color=mode==="custom"?$('noticeCustomColor').value:"";if(!title||!body)return showToast("Enter a notice title and message.");const expires=$('noticeExpiry').value;if(expires&&expires<today)return showToast("Expiry date cannot be in the past.");state.notices.unshift({id:Date.now(),title,body,color,expires,createdBy:state.currentUser.name,createdAt:new Date().toLocaleString()});saveData();showToast("Notice board updated.");renderNoticeBoard();}
+function deleteSchoolMessage(type,id){const list=type==="alert"?state.alerts:state.notices;if(!(isAdmin()||list.some(m=>m.id===id&&m.createdBy===state.currentUser?.name)))return showToast("You cannot delete this item.");if(!confirm("Delete this item?"))return;const i=list.findIndex(m=>m.id===id);if(i>=0)list.splice(i,1);saveData();type==="alert"?renderAlerts():renderNoticeBoard();showToast("Item deleted.");}
+
+
+// Private account-to-account messaging centre.
+const _misLoadWithMessaging=loadData;
+loadData=function(){
+  _misLoadWithMessaging();
+  try{const d=JSON.parse(localStorage.getItem("schoolMISPrototype")||"{}");state.privateMessages=Array.isArray(d.privateMessages)?d.privateMessages:[];}
+  catch(e){state.privateMessages=[];}
+};
+const _misSaveWithMessaging=saveData;
+saveData=function(){
+  _misSaveWithMessaging();
+  try{const d=JSON.parse(localStorage.getItem("schoolMISPrototype")||"{}");d.privateMessages=state.privateMessages||[];localStorage.setItem("schoolMISPrototype",JSON.stringify(d));}
+  catch(e){console.warn("Could not save private messages",e);}
+};
+const _misSetupNavWithMessaging=setupRoleNav;
+setupRoleNav=function(){_misSetupNavWithMessaging();addNav("Messages","messages","✉");};
+const _misRenderWithMessaging=render;
+render=function(){if(state.currentPage==="messages")return renderMessageCentre();return _misRenderWithMessaging();};
+function messagingRecipients(){
+  const u=state.currentUser;if(!u)return [];
+  let allowed=[];
+  if(u.role==="Student")allowed=["Teacher"];
+  else if(u.role==="Teacher")allowed=["Student"];
+  else if(["Admin","Staff"].includes(u.role))allowed=["Student","Teacher"];
+  return (state.accounts||[]).filter(a=>a.username!==u.username&&allowed.includes(a.role)).sort((a,b)=>(a.name||a.username).localeCompare(b.name||b.username));
+}
+function messageAccountLabel(a){return `${a.name||a.username} · ${a.role}${a.studentId?` (${a.studentId})`:""}`;}
+function renderMessageCentre(){
+  const u=state.currentUser;if(!u){$('content').innerHTML=pageHead("Messages","Sign in to use messages.");return;}
+  const mode=state.messageMode||"inbox";
+  const all=state.privateMessages||[];
+  const inbox=all.filter(m=>m.toUsername===u.username).sort((a,b)=>b.sentAt-a.sentAt);
+  const sent=all.filter(m=>m.fromUsername===u.username).sort((a,b)=>b.sentAt-a.sentAt);
+  const shown=mode==="sent"?sent:inbox;
+  const unread=inbox.filter(m=>!m.readAt).length;
+  const recipients=messagingRecipients();
+  const compose=recipients.length?`<section class="panel" style="margin-bottom:18px"><div class="panel-head"><h3>Compose a message</h3><span class="muted" style="font-size:11px">Private message</span></div><div class="panel-body"><div class="form-grid"><div class="field span-2"><label for="privateTo">Send to *</label><select id="privateTo"><option value="">Choose a recipient…</option>${recipients.map(a=>`<option value="${esc(a.username)}">${esc(messageAccountLabel(a))}</option>`).join("")}</select></div><div class="field span-2"><label for="privateSubject">Subject *</label><input id="privateSubject" maxlength="120" placeholder="Message subject"></div><div class="field span-2"><label for="privateBody">Message *</label><textarea id="privateBody" rows="4" maxlength="5000" placeholder="Write your message…"></textarea></div></div><button class="btn btn-primary" onclick="sendPrivateMessage()">Send message</button></div></section>`:`<div class="notice" style="margin-bottom:18px">There are no eligible recipients for this account. Students can message teachers, teachers can message students, and Admins/Staff can message either group.</div>`;
+  const cards=shown.map(m=>{const isInbox=mode==="inbox",other=(state.accounts||[]).find(a=>a.username===(isInbox?m.fromUsername:m.toUsername));return `<article class="panel" style="padding:17px 19px;margin-bottom:12px;border-left:4px solid ${isInbox&&!m.readAt?'#3767d6':'#dce3ef'}"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><div style="min-width:0;flex:1"><div style="font-weight:800;font-size:14px;overflow-wrap:anywhere">${esc(m.subject)}</div><div class="message-meta"><span>${isInbox?'From':'To'} ${esc(other?messageAccountLabel(other):(isInbox?m.fromName:m.toName)||'Account unavailable')}</span><span>${esc(m.sentLabel||new Date(m.sentAt).toLocaleString())}</span>${isInbox&&!m.readAt?'<span class="pill pill-blue">Unread</span>':''}</div></div>${isInbox&&!m.readAt?`<button class="btn btn-outline btn-sm" onclick="markPrivateMessageRead('${esc(m.id)}')">Mark read</button>`:''}</div><div class="message-body" style="margin-top:12px">${esc(m.body)}</div></article>`;}).join("");
+  $('content').innerHTML=pageHead("Messages","Send and receive private messages between students and teachers.")+compose+`<div class="message-tabs"><button class="btn ${mode==='inbox'?'btn-primary':'btn-outline'}" onclick="setMessageMode('inbox')">Inbox${unread?` (${unread} unread)`:''}</button><button class="btn ${mode==='sent'?'btn-primary':'btn-outline'}" onclick="setMessageMode('sent')">Sent (${sent.length})</button></div><div class="panel"><div class="panel-head"><h3>${mode==='sent'?'Sent messages':'Inbox'}</h3><span class="muted" style="font-size:11px">${shown.length} message${shown.length===1?'':'s'}</span></div><div class="panel-body">${cards||`<div class="empty"><div class="big">✉</div>${mode==='sent'?'You have not sent any messages yet.':'Your inbox is empty.'}</div>`}</div></div>`;
+}
+function setMessageMode(mode){state.messageMode=mode;renderMessageCentre();}
+function sendPrivateMessage(){
+  const u=state.currentUser;if(!u)return showToast("Please sign in first.");
+  const toUsername=$('privateTo')?.value,subject=$('privateSubject')?.value.trim(),body=$('privateBody')?.value.trim();
+  const recipient=messagingRecipients().find(a=>a.username===toUsername);
+  if(!recipient)return showToast("Choose an eligible recipient.");
+  if(!subject||!body)return showToast("Enter both a subject and a message.");
+  const sentAt=Date.now();
+  state.privateMessages=state.privateMessages||[];
+  state.privateMessages.unshift({id:`${sentAt}-${Math.random().toString(36).slice(2,8)}`,fromUsername:u.username,fromName:u.name,fromRole:u.role,toUsername:recipient.username,toName:recipient.name,toRole:recipient.role,subject,body,sentAt,sentLabel:new Date(sentAt).toLocaleString(),readAt:null});
+  saveData();state.messageMode="sent";showToast("Message sent.");renderMessageCentre();
+}
+function markPrivateMessageRead(id){const m=(state.privateMessages||[]).find(x=>String(x.id)===String(id)&&x.toUsername===state.currentUser?.username);if(!m)return;m.readAt=Date.now();saveData();renderMessageCentre();}
+
+
+// Additional student self-service tabs.
+const _misSetupStudentTabs=setupRoleNav;
+setupRoleNav=function(){
+  _misSetupStudentTabs();
+  addNav("My points","studentpoints","★");
+  addNav("My timetable","studenttimetable","▦");
+  addNav("My achievements","studentachievements","🏆");
+  addNav("My profile","studentprofile","♙");
+  document.querySelectorAll('.nav-btn[data-page="studentpoints"],.nav-btn[data-page="studenttimetable"],.nav-btn[data-page="studentachievements"],.nav-btn[data-page="studentprofile"]').forEach(b=>b.classList.toggle("hidden",staffRole()));
+};
+const _misRenderStudentTabs=render;
+render=function(){
+  if(!staffRole()){
+    if(state.currentPage==="studentpoints")return renderStudentPoints();
+    if(state.currentPage==="studenttimetable")return renderStudentTimetable();
+    if(state.currentPage==="studentachievements")return renderStudentAchievements();
+    if(state.currentPage==="studentprofile")return renderStudentProfile();
+  }
+  return _misRenderStudentTabs();
+};
+function requireCurrentStudent(){const s=currentStudent();if(!s){$('content').innerHTML=pageHead("Student view","Your account is not linked to a student record.");return null;}return s;}
+function renderStudentPoints(){
+ const s=requireCurrentStudent();if(!s)return;const t=totals(s.id);
+ const entries=(state.entries||[]).filter(e=>e.studentId===s.id).sort((a,b)=>String(b.date||"").localeCompare(String(a.date||""))||Number(b.id||0)-Number(a.id||0));
+ $('content').innerHTML=pageHead("My points","Your positive and negative behaviour points, with the reasons recorded by staff.")+
+ `<div class="grid stats">${stat("Positive points",t.pos,"↗","#e8f7ef","Awards and achievements")}${stat("Negative points",t.neg,"↘","#fff0f0","Behaviour points")}${stat("Net points",t.net,"★","#e8f7ef","Positive minus negative")}${stat("Records",entries.length,"▤","#f3f7f4","Total point entries")}</div>`+
+ `<div class="panel"><div class="panel-head"><h3>Points history</h3><span class="muted" style="font-size:11px">${entries.length} records</span></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Type</th><th>Level</th><th>Points</th><th>Reason</th><th>Comment</th><th>Recorded by</th></tr></thead><tbody>${entries.map(e=>`<tr><td>${esc(e.date||"—")}</td><td>${entryPill(e)}</td><td>Level ${esc(e.level??"—")}</td><td style="font-weight:800;color:${e.type==="positive"?"var(--green)":"var(--red)"}">${e.type==="positive"?"+":"−"}${esc(e.points??0)}</td><td>${esc(e.reason||"—")}</td><td>${esc(e.note||e.comment||"—")}</td><td>${esc(e.staff||"—")}</td></tr>`).join("")||'<tr><td colspan="7"><div class="empty">No points have been recorded yet.</div></td></tr>'}</tbody></table></div></div>`;
+}
+function studentTimetableData(s){
+ const key=today+"-"+s.id;let tt=s.timetable||state.timetableCache?.[key];
+ if(!tt){const pool=[["Maths","Jamie Taylor"],["English","Sam Green"],["Science","Priya Shah"],["History","Alex Morgan"],["PE","Jordan Lee"],["Art","Casey Brown"],["Computing","Jamie Taylor"],["Geography","Sam Green"]];const shuffled=[...pool].sort(()=>Math.random()-.5).slice(0,5);tt=shuffled.map((x,i)=>({time:["09:00","10:00","11:20","12:20","14:00"][i],subject:x[0],teacher:x[1]}));state.timetableCache=state.timetableCache||{};state.timetableCache[key]=tt;saveData();}
+ return Array.isArray(tt)?tt:[];
+}
+function renderStudentTimetable(){
+ const s=requireCurrentStudent();if(!s)return;const tt=studentTimetableData(s);
+ $('content').innerHTML=pageHead("My timetable","Check your lessons and the teacher listed for each period.")+
+ `<div class="notice" style="margin-bottom:16px">Your timetable is currently demo data unless your school has entered a personal timetable for your account.</div><div class="panel"><div class="panel-head"><h3>Today's lessons</h3><span class="pill pill-blue">${esc(today)}</span></div><div class="table-wrap"><table><thead><tr><th>Time</th><th>Subject</th><th>Teacher</th></tr></thead><tbody>${tt.map(x=>`<tr><td>${esc(x.time||"—")}</td><td><strong>${esc(x.subject||"—")}</strong></td><td>${esc(x.teacher||"—")}</td></tr>`).join("")||'<tr><td colspan="3">No timetable entries are available.</td></tr>'}</tbody></table></div></div>`;
+}
+function renderStudentAchievements(){
+ const s=requireCurrentStudent();if(!s)return;const t=totals(s.id),entries=(state.entries||[]).filter(e=>e.studentId===s.id&&e.type==="positive").sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
+ const milestones=[{points:10,title:"10 positive points",desc:"A great start"},{points:25,title:"25 positive points",desc:"Building positive habits"},{points:50,title:"50 positive points",desc:"Consistent effort"},{points:100,title:"100 positive points",desc:"Outstanding commitment"}];
+ $('content').innerHTML=pageHead("My achievements","Celebrate your positive contributions and progress.")+
+ `<div class="grid stats">${stat("Positive points",t.pos,"★","#e8f7ef","Points earned")}${stat("Positive records",entries.length,"✓","#e8f7ef","Recorded achievements")}</div><div class="grid two-col" style="margin-bottom:17px">${milestones.map(m=>`<section class="panel"><div class="panel-body"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><strong>${m.title}</strong><span class="pill ${t.pos>=m.points?"pill-positive":"pill-blue"}">${t.pos>=m.points?"Achieved":"In progress"}</span></div><p class="muted" style="font-size:12px">${m.desc}</p><div style="height:8px;background:#e8f0ea;border-radius:99px;overflow:hidden"><div style="height:100%;width:${Math.min(100,Math.round(t.pos/m.points*100))}%;background:#25804b;border-radius:99px"></div></div><small class="muted">${Math.min(t.pos,m.points)} / ${m.points} points</small></div></section>`).join("")}</div><div class="panel"><div class="panel-head"><h3>Recent positive records</h3></div><div class="panel-body">${entries.slice(0,8).map(e=>`<div class="activity-item" style="margin-bottom:13px"><div class="activity-icon" style="background:#e8f7ef;color:#168452">★</div><div class="activity-copy"><strong>${esc(e.reason||"Positive contribution")}</strong><small>${esc(e.date||"Date not recorded")} · Level ${esc(e.level??"—")} · ${esc(e.staff||"Staff")}</small></div><span class="pill pill-positive">+${esc(e.points??0)}</span></div>`).join("")||'<div class="empty">Your positive achievements will appear here.</div>'}</div></div>`;
+}
+function renderStudentProfile(){
+ const s=requireCurrentStudent();if(!s)return;const a=state.accounts.find(x=>x.studentId===s.id)||{};
+ $('content').innerHTML=pageHead("My profile","Your school details and account information.")+
+ `<div class="panel"><div class="profile-top"><div class="profile-avatar">${esc(initials(s))}</div><div><h2>${esc(s.first+" "+s.last)}</h2><div class="muted">Student ID: ${esc(s.id)}</div></div></div><div class="panel-body"><div class="grid two-col"><div><div class="muted" style="font-size:11px">Year group</div><strong>${esc(s.year||"—")}</strong></div><div><div class="muted" style="font-size:11px">Class</div><strong>${esc(s.className||"—")}</strong></div><div><div class="muted" style="font-size:11px">House</div><strong>${esc(s.house||"—")}</strong></div><div><div class="muted" style="font-size:11px">Status</div><strong>${esc(s.status||"Active")}</strong></div><div><div class="muted" style="font-size:11px">Username</div><strong>${esc(a.username||"—")}</strong></div><div><div class="muted" style="font-size:11px">Account role</div><strong>${esc(a.role||"Student")}</strong></div></div><div class="notice" style="margin-top:18px">If any of these details are incorrect, contact your school office. Profile details cannot be edited from a student account.</div></div></div>`;
+}
+
+
+// Student status enhancements: support status plus an overriding suspension/expulsion status.
+function getStudentSupportStatus(s){
+ const allowed=["Neutral","On report","Urgent Attention"];
+ if(allowed.includes(s?.supportStatus)) return s.supportStatus;
+ if(s?.status==="On report"||s?.status==="Urgent Attention"||s?.status==="Neutral") return s.status;
+ return "Neutral"; // migrate legacy Active / Archived records to Neutral
+}
+function supportStatusStyle(status){
+ if(status==="On report") return 'color:#9a5b00;background:#fff0d2;border:1px solid #f2cc83';
+ if(status==="Urgent Attention") return 'color:#2456a6;background:#eaf2ff;border:1px solid #b9d0ff';
+ return 'color:#168452;background:#e8f7ef;border:1px solid #b9e5ca';
+}
+function studentStatusBadges(s){
+ const support=getStudentSupportStatus(s);
+ const supportBadge=`<span class="pill" style="${supportStatusStyle(support)}">${esc(support)}</span>`;
+ const overriding=(s.status==="Suspended"||s.status==="Expelled")?`<span class="pill ${s.status==="Expelled"?'pill-negative':'pill-amber'}" style="display:inline-flex;margin-bottom:4px">${esc(s.status)}</span><br>`:"";
+ return `${overriding}${supportBadge}`;
+}
+function openStudentModal(id=""){
+ const existing=state.students.find(x=>x.id===id);
+ const s=existing||{id:"",first:"",last:"",year:state.years[0],className:state.classes[0],house:"Oak",status:"Active",supportStatus:"Neutral"};
+ const support=getStudentSupportStatus(s);
+ const overrideNote=(s.status==="Suspended"||s.status==="Expelled")?`<div class="notice span-2">Current restriction: <strong>${esc(s.status)}</strong>. This overrides the support status shown to staff.</div>`:"";
+ openModal(id?"Edit student":"Add student",`<form id="studentForm"><div class="form-grid"><div class="field"><label>Student ID *</label><input id="sId" required value="${esc(s.id)}" ${id?"readonly":""} placeholder="e.g. ST1009"></div><div class="field"><label>Student status</label><select id="sStatus" ${isAdmin()?"":"disabled"}><option value="Neutral" ${support==="Neutral"?"selected":""}>Neutral (Green)</option><option value="On report" ${support==="On report"?"selected":""}>On report (Orange)</option><option value="Urgent Attention" ${support==="Urgent Attention"?"selected":""}>Urgent Attention (Blue)</option></select>${overrideNote}</div><div class="field"><label>First name *</label><input id="sFirst" required value="${esc(s.first)}"></div><div class="field"><label>Surname *</label><input id="sLast" required value="${esc(s.last)}"></div><div class="field"><label>Year group *</label><select id="sYear">${state.years.map(y=>`<option ${s.year===y?"selected":""}>${esc(y)}</option>`).join("")}</select></div><div class="field"><label>Class *</label><select id="sClass">${state.classes.map(c=>`<option ${s.className===c?"selected":""}>${esc(c)}</option>`).join("")}</select></div><div class="field span-2"><label>House / team</label><input id="sHouse" value="${esc(s.house||"")}" placeholder="e.g. Oak"></div></div></form>`,`<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveStudent('${esc(id)}')">Save student</button>`);
+}
+function saveStudent(oldId){
+ const id=$("sId").value.trim(), first=$("sFirst").value.trim(), last=$("sLast").value.trim();
+ if(!id||!first||!last)return showToast("Complete the required student fields.");
+ if(!oldId&&state.students.some(s=>s.id===id))return showToast("That student ID already exists.");
+ const old=oldId?state.students.find(x=>x.id===oldId):null;
+ const supportStatus=$("sStatus").value;
+ const s={...(old||{}),id,first,last,year:$("sYear").value,className:$("sClass").value,house:$("sHouse").value.trim(),status:(old?.status==="Suspended"||old?.status==="Expelled")?old.status:"Active",supportStatus:isAdmin()?supportStatus:getStudentSupportStatus(old||{status:"Active"})};
+ if(oldId){const i=state.students.findIndex(x=>x.id===oldId);state.students[i]=s;}else state.students.push(s);
+ saveData();closeModal();showToast(oldId?"Student updated.":"Student added.");renderStudents();
+}
+// The student profile contains the support-status selector. Suspension/expulsion remains a separate, higher-priority status.
+const _statusEnhancedProfileViewStudent=viewStudent;
+viewStudent=function(id){
+ const s=student(id);if(!s)return;
+ const oldProfileNotes=s.notes||"";
+ const support=getStudentSupportStatus(s);
+ const canEdit=staffRole();
+ const statusControl=`<div class="field" style="margin:0 0 16px"><label>Current status</label><div style="margin:4px 0 9px">${(s.status==="Suspended"||s.status==="Expelled")?`<span class="pill ${s.status==="Expelled"?'pill-negative':'pill-amber'}" style="margin-bottom:5px">${esc(s.status)}</span><br>`:""}<span class="pill" style="${supportStatusStyle(support)}">${esc(support)}</span></div>${isAdmin()?`<label for="profileSupportStatus">Change student status</label><select id="profileSupportStatus"><option value="Neutral" ${support==="Neutral"?"selected":""}>Neutral (Green)</option><option value="On report" ${support==="On report"?"selected":""}>On report (Orange)</option><option value="Urgent Attention" ${support==="Urgent Attention"?"selected":""}>Urgent Attention (Blue)</option></select><div class="muted" style="font-size:11px;margin-top:5px">${(s.status==="Suspended"||s.status==="Expelled")?`<strong>${esc(s.status)} overrides the status above.</strong> `:""}Choose the student's day-to-day status.</div>`:""}</div>`;
+ // Use the existing full profile, then add status controls and preserve its existing note/timetable editing.
+ _statusEnhancedProfileViewStudent(id);
+ if(isAdmin()){
+   const modalBody=document.querySelector("#modalRoot .modal-body");
+   if(modalBody){
+     const heading=[...modalBody.querySelectorAll("h3")].find(h=>h.textContent.includes("Reward and negative point details"));
+     const holder=document.createElement("div");holder.innerHTML=statusControl;
+     if(heading)heading.parentNode.insertBefore(holder.firstElementChild,heading);
+   }
+   const saveBtn=[...document.querySelectorAll("#modalRoot .modal-foot button")].find(b=>b.textContent.includes("Save notes & timetable"));
+   if(saveBtn)saveBtn.textContent="Save profile changes";
+ }
+};
+const _statusEnhancedSaveStudentProfile=saveStudentProfile;
+saveStudentProfile=function(id){
+ if(!staffRole())return showToast("Staff access required.");
+ const s=student(id);if(!s)return;
+ if(isAdmin()){
+   const chosen=$("profileSupportStatus")?.value;
+   if(chosen&&["Neutral","On report","Urgent Attention"].includes(chosen))s.supportStatus=chosen;
+ }
+ s.notes=$("profileNotes")?.value.trim()||"";
+ const raw=$("profileTimetable")?.value;if(raw!==undefined)s.timetable=parseTimetableText(raw);
+ saveData();closeModal();showToast("Student profile saved.");
+};
+// Show the overriding disciplinary status first, with the support status beneath it.
+studentRow=function(s){
+ const t=totals(s.id),support=getStudentSupportStatus(s);
+ const canAdmin=isAdmin();
+ return `<tr><td><div class="student-cell"><div class="mini-avatar">${esc(initials(s))}</div><div><div class="student-name">${esc(s.first+" "+s.last)}</div><div class="subline">${esc(s.house||"No house")}</div></div></div></td><td>${esc(s.id)}</td><td>${esc(s.year)}</td><td>${esc(s.className)}</td><td style="color:var(--green);font-weight:800">+${t.pos}</td><td style="color:var(--red);font-weight:800">−${t.neg}</td><td style="font-weight:800">${t.net}</td><td>${studentStatusBadges(s)}</td><td><button class="btn btn-outline btn-sm" onclick="viewStudent('${esc(s.id)}')">Profile</button> <button class="btn btn-outline btn-sm" onclick="openStudentModal('${esc(s.id)}')">Edit</button> ${canAdmin?`<button class="btn btn-outline btn-sm" onclick="manageStudentStatus('${esc(s.id)}','Suspended')">Suspend</button> <button class="btn btn-red btn-sm" onclick="manageStudentStatus('${esc(s.id)}','Expelled')">Expel</button> ${(s.status==="Suspended"||s.status==="Expelled")?`<button class="btn btn-green btn-sm" onclick="manageStudentStatus('${esc(s.id)}','Active')">Reinstate</button>`:""}`:""}</td></tr>`;
+};
+const _statusEnhancedManageStudentStatus=manageStudentStatus;
+manageStudentStatus=function(id,status){
+ if(!isAdmin())return showToast("Only an admin can suspend or expel students.");
+ const s=student(id);if(!s)return;
+ if(status==="Active"){
+   if(!confirm(`Reinstate ${s.first} ${s.last}? Their support status will remain ${getStudentSupportStatus(s)}.`))return;
+   s.status="Active";saveData();showToast("Student reinstated.");renderStudents();return;
+ }
+ if(status!=="Suspended"&&status!=="Expelled")return;
+ if(!confirm(`Set ${s.first} ${s.last} to ${status}? This will restrict their student login. Their support status will remain ${getStudentSupportStatus(s)}.`))return;
+ s.status=status;saveData();showToast(`Student status updated: ${status}.`);renderStudents();
+};
+
+// Arbor MIS demo feature pack: leadership analytics, pastoral tools, calendar, cover, audit, search and parent view.
+state.schoolEvents=[]; state.pastoralCases=[]; state.detentions=[]; state.coverAssignments=[]; state.auditLog=[]; state.permissionConfig={};
+const _featureLoadBase=loadData;
+loadData=function(){
+  _featureLoadBase();
+  try{const d=JSON.parse(localStorage.getItem("schoolMISPrototype")||"{}");
+    state.schoolEvents=Array.isArray(d.schoolEvents)?d.schoolEvents:[];
+    state.pastoralCases=Array.isArray(d.pastoralCases)?d.pastoralCases:[];
+    state.detentions=Array.isArray(d.detentions)?d.detentions:[];
+    state.coverAssignments=Array.isArray(d.coverAssignments)?d.coverAssignments:[];
+    state.auditLog=Array.isArray(d.auditLog)?d.auditLog:[];
+    state.permissionConfig=d.permissionConfig&&typeof d.permissionConfig==="object"?d.permissionConfig:{};
+  }catch(e){state.schoolEvents=[];state.pastoralCases=[];state.detentions=[];state.coverAssignments=[];state.auditLog=[];state.permissionConfig={};}
+};
+const _featureSaveBase=saveData;
+saveData=function(){
+  _featureSaveBase();
+  try{const d=JSON.parse(localStorage.getItem("schoolMISPrototype")||"{}");Object.assign(d,{schoolEvents:state.schoolEvents||[],pastoralCases:state.pastoralCases||[],detentions:state.detentions||[],coverAssignments:state.coverAssignments||[],auditLog:(state.auditLog||[]).slice(0,500),permissionConfig:state.permissionConfig||{}});localStorage.setItem("schoolMISPrototype",JSON.stringify(d));}catch(e){console.warn("Demo feature save failed",e);}
+};
+const _auditBase=showToast;
+function logAudit(action,detail="") { state.auditLog=state.auditLog||[]; state.auditLog.unshift({id:Date.now()+Math.random(),at:new Date().toLocaleString(),user:state.currentUser?.name||"Demo system",role:state.currentUser?.role||"System",action,detail}); state.auditLog=state.auditLog.slice(0,500); try{saveData();}catch(e){} }
+function canAccessFeature(page){if(isAdmin())return true;const cfg=state.permissionConfig||{};const roles=cfg[page];if(Array.isArray(roles))return roles.includes(state.currentUser?.role);const defaults={attendanceDashboard:["Admin","Staff","Teacher"],rewards:["Admin","Staff","Teacher"],pastoral:["Admin","Staff"],calendar:["Admin","Staff","Teacher","Student","Parent"],detentions:["Admin","Staff","Teacher"],cover:["Admin","Staff"],staffdashboard:["Admin","Staff","Teacher"],audit:["Admin"],globalSearch:["Admin","Staff","Teacher","Student","Parent"],permissions:["Admin"],parentportal:["Parent"]};return (defaults[page]||["Admin"]).includes(state.currentUser?.role);}
+function featureGuard(page){if(!canAccessFeature(page)){showToast("Your account does not have permission to open this section.");state.currentPage=staffRole()?"dashboard":"studenthome";render();return false;}return true;}
+const _featureSetupNavBase=setupRoleNav;
+setupRoleNav=function(){
+  _featureSetupNavBase();
+  addNav("Attendance insights","attendanceDashboard","▥");addNav("Rewards centre","rewards","🏆");addNav("Safeguarding & pastoral","pastoral","♧");addNav("School calendar","calendar","▦");addNav("Detentions","detentions","◷");addNav("Cover manager","cover","▤");addNav("Staff dashboard","staffdashboard","◫");addNav("Audit log","audit","≡");addNav("Search everything","globalSearch","⌕");addNav("Permissions","permissions","⚙");addNav("Parent portal","parentportal","⌂");
+  const studentOnly=["studentpoints","studenttimetable","studentachievements","studentprofile"];
+  document.querySelectorAll(".nav-btn").forEach(b=>{
+    const p=b.dataset.page;
+    if(studentOnly.includes(p))b.classList.toggle("hidden",state.currentUser?.role!=="Student");
+    if(["attendanceDashboard","rewards","pastoral","calendar","detentions","cover","staffdashboard","audit","globalSearch","permissions","parentportal"].includes(p))b.classList.toggle("hidden",!canAccessFeature(p));
+    if(["students","behaviour","award","classes","reports","settings","users"].includes(p))b.classList.toggle("hidden",!staffRole()||(p==="users"&&!isAdmin()));
+  });
+  const roleSelect=$("uRole");if(roleSelect&&!roleSelect.querySelector('option[value="Parent"]'))roleSelect.insertAdjacentHTML("beforeend",'<option value="Parent">Parent / carer</option>');
+};
+const _featureRenderBase=render;
+render=function(){
+  const p=state.currentPage;
+  if(["attendanceDashboard","rewards","pastoral","calendar","detentions","cover","staffdashboard","audit","globalSearch","permissions","parentportal"].includes(p)){
+    if(!featureGuard(p))return;
+    return ({attendanceDashboard:renderAttendanceDashboard,rewards:renderRewardsCentre,pastoral:renderPastoral,calendar:renderSchoolCalendar,detentions:renderDetentions,cover:renderCoverManager,staffdashboard:renderStaffDashboard,audit:renderAuditLog,globalSearch:renderGlobalSearch,permissions:renderPermissions,parentportal:renderParentPortal})[p]();
+  }
+  if(state.currentUser?.role==="Parent"&&!staffRole())return renderParentPortal();
+  return _featureRenderBase();
+};
+function featureDate(){return new Date().toISOString().slice(0,10)}
+function featureStudentOptions(){return state.students.map(s=>`<option value="${esc(s.id)}">${esc(s.first+" "+s.last)} · ${esc(s.id)} · ${esc(s.className)}</option>`).join("")}
+function featurePage(title,subtitle,actions=""){return pageHead(title,subtitle,actions)}
+function renderAttendanceDashboard(){
+ const active=state.students.filter(s=>s.status!=="Expelled"),records=state.attendance||[],todayRows=records.filter(a=>a.date===today),present=todayRows.filter(a=>a.status==="Present").length,absent=todayRows.filter(a=>a.status==="Absent").length,late=todayRows.filter(a=>a.status==="Late").length,recorded=new Set(todayRows.map(a=>a.studentId)).size,pct=recorded?Math.round(present/recorded*100):0;
+ const groups=[...new Set(active.map(s=>s.className))].sort().map(c=>{const ss=active.filter(s=>s.className===c),rr=todayRows.filter(a=>ss.some(s=>s.id===a.studentId));return {c,n:ss.length,r:rr.length,p:rr.filter(a=>a.status==="Present").length,a:rr.filter(a=>a.status==="Absent").length,l:rr.filter(a=>a.status==="Late").length}});
+ $("content").innerHTML=featurePage("Attendance insights","School-wide attendance overview for the demo.",`<button class="btn btn-primary" onclick="go('attendance')">Open register</button>`)+`<div class="grid stats">${stat("Students",active.length,"♙","#eaf0ff","Not expelled")}${stat("Present today",present,"✓","#e8f7ef",`${recorded} records entered`)}${stat("Absent today",absent,"!","#fff0f0","Recorded absences")}${stat("Late today",late,"◷","#fff5d9","Recorded late arrivals")}</div><div class="panel"><div class="panel-head"><h3>By class</h3><span class="pill pill-blue">${recorded?pct+"% present among recorded":"No register entries yet"}</span></div><div class="table-wrap"><table><thead><tr><th>Class</th><th>Students</th><th>Recorded</th><th>Present</th><th>Absent</th><th>Late</th><th>Completion</th></tr></thead><tbody>${groups.map(g=>`<tr><td><strong>${esc(g.c)}</strong></td><td>${g.n}</td><td>${g.r}</td><td>${g.p}</td><td>${g.a}</td><td>${g.l}</td><td>${g.n?Math.round(g.r/g.n*100):0}%</td></tr>`).join("")}</tbody></table></div></div><div class="notice" style="margin-top:14px">Demo note: this dashboard uses attendance records entered in this browser. For a real school, attendance definitions and reporting rules should be agreed with the school.</div>`;
+}
+function renderRewardsCentre(){
+ const totalsList=state.students.map(s=>({...s,...totals(s.id)})).sort((a,b)=>b.pos-a.pos),milestones=[10,25,50,100];
+ $("content").innerHTML=featurePage("Behaviour & rewards centre","Recognise achievement and review behaviour trends.",`<button class="btn btn-primary" onclick="go('award')">＋ Record points</button>`)+`<div class="grid stats">${stat("Positive points",allTotals().pos,"★","#e8f7ef","Across the school")}${stat("Negative points",allTotals().neg,"!","#fff0f0","Across the school")}${stat("Students with rewards",totalsList.filter(s=>s.pos>0).length,"♙","#eaf0ff","At least one positive point")}${stat("Review threshold",totalsList.filter(s=>s.neg>=5).length,"⚑","#fff5d9","5+ negative points")}</div><div class="panel"><div class="panel-head"><h3>Achievement milestones</h3><span class="muted">Based on positive points</span></div><div class="table-wrap"><table><thead><tr><th>Student</th><th>Class</th><th>Positive points</th><th>Milestone</th><th>Progress</th></tr></thead><tbody>${totalsList.map(s=>{const reached=milestones.filter(m=>s.pos>=m).pop()||0,next=milestones.find(m=>m>s.pos)||100;return `<tr><td>${esc(s.first+" "+s.last)}</td><td>${esc(s.className)}</td><td><strong style="color:var(--green)">${s.pos}</strong></td><td>${reached?`<span class="pill pill-positive">${reached} point milestone</span>`:'<span class="muted">Getting started</span>'}</td><td>${Math.min(100,Math.round(s.pos/next*100))}% to ${next}</td></tr>`}).join("")}</tbody></table></div></div>`;
+}
+function renderPastoral(){
+ const canManage=["Admin","Staff"].includes(state.currentUser?.role),cases=(state.pastoralCases||[]).slice().sort((a,b)=>b.createdAt-a.createdAt);
+ const form=canManage?`<section class="panel" style="margin-bottom:16px"><div class="panel-head"><h3>Record a pastoral concern</h3><span class="pill pill-amber">Restricted demo data</span></div><div class="panel-body"><div class="form-grid"><div class="field"><label>Student *</label><select id="pastStudent">${featureStudentOptions()}</select></div><div class="field"><label>Priority</label><select id="pastPriority"><option>Routine</option><option>Urgent</option><option>Immediate</option></select></div><div class="field span-2"><label>Concern summary *</label><input id="pastTitle" maxlength="140" placeholder="Brief, factual summary — use fictional details"></div><div class="field span-2"><label>Action / follow-up</label><textarea id="pastAction" rows="3" maxlength="1500" placeholder="Next steps and responsible person"></textarea></div></div><button class="btn btn-primary" onclick="savePastoralCase()">Record concern</button></div></section>`:"";
+ $("content").innerHTML=featurePage("Safeguarding & pastoral","Restricted workflow for recording and tracking fictional pastoral concerns.")+form+`<div class="notice" style="margin-bottom:14px">Use fictional details only. This prototype is not a safeguarding case-management system and must not be used for real safeguarding records.</div><div class="panel"><div class="panel-head"><h3>Pastoral follow-up</h3><span class="muted">${cases.length} record(s)</span></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Student</th><th>Priority</th><th>Summary</th><th>Follow-up</th><th>Status</th><th>Action</th></tr></thead><tbody>${cases.map(c=>`<tr><td>${esc(c.date)}</td><td>${esc(student(c.studentId).first+" "+student(c.studentId).last)}</td><td><span class="pill ${c.priority==="Immediate"?'pill-negative':c.priority==="Urgent"?'pill-amber':'pill-blue'}">${esc(c.priority)}</span></td><td>${esc(c.title)}</td><td>${esc(c.action||"—")}</td><td>${esc(c.status)}</td><td>${canManage?`<button class="btn btn-outline btn-sm" onclick="togglePastoralCase('${c.id}')">${c.status==="Open"?"Mark followed up":"Reopen"}</button>`:"Staff only"}</td></tr>`).join("")||'<tr><td colspan="7" class="muted">No demo concerns recorded.</td></tr>'}</tbody></table></div></div>`;
+}
+function savePastoralCase(){if(!["Admin","Staff"].includes(state.currentUser?.role))return showToast("Only authorised pastoral staff can record concerns.");const title=$("pastTitle").value.trim();if(!title)return showToast("Enter a concern summary.");const c={id:String(Date.now()),studentId:$("pastStudent").value,priority:$("pastPriority").value,title,action:$("pastAction").value.trim(),date:today,status:"Open",createdAt:Date.now(),createdBy:state.currentUser.name};state.pastoralCases.unshift(c);logAudit("Pastoral concern recorded",c.studentId+" · "+c.priority);saveData();showToast("Demo pastoral concern recorded.");renderPastoral()}
+function togglePastoralCase(id){if(!["Admin","Staff"].includes(state.currentUser?.role))return showToast("Staff access required.");const c=state.pastoralCases.find(x=>x.id===id);if(!c)return;c.status=c.status==="Open"?"Followed up":"Open";logAudit("Pastoral status changed",c.id+" · "+c.status);saveData();renderPastoral()}
+function renderSchoolCalendar(){
+ const events=(state.schoolEvents||[]).slice().sort((a,b)=>(a.date||"").localeCompare(b.date||"")),canPost=["Admin","Staff","Teacher"].includes(state.currentUser?.role);
+ const form=canPost?`<section class="panel" style="margin-bottom:16px"><div class="panel-head"><h3>Add school event</h3></div><div class="panel-body"><div class="form-grid"><div class="field"><label>Event title *</label><input id="eventTitle" maxlength="120" placeholder="e.g. Sports day"></div><div class="field"><label>Date *</label><input id="eventDate" type="date" value="${today}"></div><div class="field"><label>Time</label><input id="eventTime" type="time"></div><div class="field"><label>Audience</label><select id="eventAudience"><option>Everyone</option><option>Students</option><option>Staff</option><option>Parents</option></select></div><div class="field span-2"><label>Details</label><textarea id="eventDetails" rows="2" maxlength="1000"></textarea></div></div><button class="btn btn-primary" onclick="saveSchoolEvent()">Add event</button></div></section>`:"";
+ const visible=events.filter(e=>e.audience==="Everyone"||(e.audience==="Students"&&state.currentUser?.role==="Student")||(e.audience==="Parents"&&state.currentUser?.role==="Parent")||(e.audience==="Staff"&&staffRole()));
+ $("content").innerHTML=featurePage("School calendar","Events, deadlines, trips and school dates.")+form+`<div class="panel"><div class="panel-head"><h3>Upcoming events</h3><span class="muted">${visible.length} event(s)</span></div><div class="panel-body">${visible.map(e=>`<article class="activity-item"><div class="activity-icon" style="background:#eaf0ff;color:#2456a6">▦</div><div class="activity-copy"><strong>${esc(e.title)}</strong><small>${esc(e.date)} ${esc(e.time||"")} · ${esc(e.audience)} · ${esc(e.details||"")}</small></div>${canPost?`<button class="btn btn-outline btn-sm" onclick="deleteSchoolEvent('${e.id}')">Delete</button>`:""}</article>`).join("")||'<div class="empty">No events have been added.</div>'}</div></div>`;
+}
+function saveSchoolEvent(){if(!["Admin","Staff","Teacher"].includes(state.currentUser?.role))return showToast("Staff access required.");const title=$("eventTitle").value.trim(),date=$("eventDate").value;if(!title||!date)return showToast("Enter an event title and date.");state.schoolEvents.push({id:String(Date.now()),title,date,time:$("eventTime").value,audience:$("eventAudience").value,details:$("eventDetails").value.trim(),createdBy:state.currentUser.name});logAudit("Calendar event created",title+" · "+date);saveData();renderSchoolCalendar()}
+function deleteSchoolEvent(id){if(!staffRole()||!confirm("Delete this demo event?"))return;state.schoolEvents=state.schoolEvents.filter(e=>e.id!==id);logAudit("Calendar event deleted",id);saveData();renderSchoolCalendar()}
+function renderDetentions(){
+ const canManage=staffRole(),mine=state.currentUser?.role==="Student"?state.detentions.filter(d=>d.studentId===state.currentUser.studentId):state.detentions;
+ const form=canManage?`<section class="panel" style="margin-bottom:16px"><div class="panel-head"><h3>Schedule a detention</h3></div><div class="panel-body"><div class="form-grid"><div class="field"><label>Student *</label><select id="detStudent">${featureStudentOptions()}</select></div><div class="field"><label>Date *</label><input id="detDate" type="date" value="${today}"></div><div class="field"><label>Time</label><input id="detTime" type="time" value="15:15"></div><div class="field"><label>Location</label><input id="detLocation" placeholder="e.g. Room 12"></div><div class="field span-2"><label>Reason *</label><input id="detReason" maxlength="250" placeholder="Brief reason"></div></div><button class="btn btn-primary" onclick="saveDetention()">Schedule detention</button></div></section>`:"";
+ $("content").innerHTML=featurePage("Detentions","Schedule, track and review demo detentions.")+form+`<div class="panel"><div class="panel-head"><h3>${canManage?"All detentions":"My detentions"}</h3></div><div class="table-wrap"><table><thead><tr><th>Student</th><th>Date</th><th>Time</th><th>Location</th><th>Reason</th><th>Status</th>${canManage?"<th>Action</th>":""}</tr></thead><tbody>${mine.map(d=>`<tr><td>${esc(student(d.studentId).first+" "+student(d.studentId).last)}</td><td>${esc(d.date)}</td><td>${esc(d.time||"—")}</td><td>${esc(d.location||"—")}</td><td>${esc(d.reason)}</td><td><span class="pill ${d.status==="Attended"?'pill-positive':d.status==="Missed"?'pill-negative':'pill-amber'}">${esc(d.status)}</span></td>${canManage?`<td><div class="actions"><select aria-label="Detention status" onchange="updateDetention('${d.id}',this.value)"><option ${d.status==="Scheduled"?"selected":""}>Scheduled</option><option ${d.status==="Attended"?"selected":""}>Attended</option><option ${d.status==="Missed"?"selected":""}>Missed</option><option ${d.status==="Cancelled"?"selected":""}>Cancelled</option></select>${d.status==="Missed"?(d.negativePointEntryId?`<button class="btn btn-outline btn-sm" disabled title="A negative point has already been recorded">Negative added ✓</button>`:`<button class="btn btn-red btn-sm" onclick="awardDetentionNegative('${d.id}')">Negative +</button>`):""}</div></td>`:""}</tr>`).join("")||`<tr><td colspan="${canManage?7:6}" class="muted">No detentions scheduled.</td></tr>`}</tbody></table></div></div>`;
+}
+function saveDetention(){if(!staffRole())return showToast("Staff access required.");const reason=$("detReason").value.trim(),date=$("detDate").value;if(!reason||!date)return showToast("Enter a reason and date.");const d={id:String(Date.now()),studentId:$("detStudent").value,date,time:$("detTime").value,location:$("detLocation").value.trim(),reason,status:"Scheduled",createdBy:state.currentUser.name};state.detentions.unshift(d);logAudit("Detention scheduled",d.studentId+" · "+date);saveData();renderDetentions()}
+function updateDetention(id,status){if(!staffRole())return showToast("Staff access required.");const d=state.detentions.find(x=>x.id===id);if(!d)return;d.status=status;logAudit("Detention status updated",id+" · "+status);saveData();renderDetentions()}
+function awardDetentionNegative(id){
+ if(!staffRole())return showToast("Staff access required.");
+ const d=state.detentions.find(x=>x.id===id);
+ if(!d||d.status!=="Missed")return showToast("Only a missed detention can receive this point.");
+ if(d.negativePointEntryId)return showToast("A negative point has already been recorded for this missed detention.");
+ const s=student(d.studentId);
+ if(!confirm(`Add 1 negative point to ${s.first} ${s.last} for failure to follow instruction after a missed detention?`))return;
+ const entryId=Date.now();
+ const entry={id:entryId,studentId:d.studentId,type:"negative",level:1,points:1,reason:"Failure to follow instruction",note:`Automatically recorded for missed detention on ${d.date}${d.time?" at "+d.time:""}.`,staff:state.currentUser?.name||"Staff",date:today,status:"Recorded"};
+ state.entries.push(entry);
+ d.negativePointEntryId=entryId;
+ d.negativePointAwardedAt=new Date().toISOString();
+ logAudit("Negative point awarded for missed detention",`${s.first} ${s.last} · ${d.id} · 1 point`);
+ saveData();
+ showToast("1 negative point recorded: Failure to follow instruction.");
+ renderDetentions();
+}
+function renderCoverManager(){
+ const canManage=["Admin","Staff"].includes(state.currentUser?.role),rows=state.coverAssignments||[];
+ const form=canManage?`<section class="panel" style="margin-bottom:16px"><div class="panel-head"><h3>Allocate lesson cover</h3></div><div class="panel-body"><div class="form-grid"><div class="field"><label>Date *</label><input id="coverDate" type="date" value="${today}"></div><div class="field"><label>Absent teacher *</label><input id="coverAbsent" placeholder="Teacher name"></div><div class="field"><label>Cover teacher *</label><input id="coverTeacher" placeholder="Cover teacher name"></div><div class="field"><label>Class / group</label><select id="coverClass">${state.classes.map(c=>`<option>${esc(c)}</option>`).join("")}</select></div><div class="field"><label>Period</label><input id="coverPeriod" placeholder="e.g. Period 3"></div><div class="field"><label>Room</label><input id="coverRoom" placeholder="e.g. Room 14"></div><div class="field span-2"><label>Notes</label><input id="coverNotes" placeholder="Resources or instructions"></div></div><button class="btn btn-primary" onclick="saveCoverAssignment()">Save cover allocation</button></div></section>`:"";
+ $("content").innerHTML=featurePage("Cover manager","Organise cover for absent teachers and keep allocations visible.")+form+`<div class="panel"><div class="panel-head"><h3>Cover allocations</h3></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Absent teacher</th><th>Cover teacher</th><th>Class</th><th>Period</th><th>Room</th><th>Notes</th></tr></thead><tbody>${rows.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(c=>`<tr><td>${esc(c.date)}</td><td>${esc(c.absent)}</td><td>${esc(c.teacher)}</td><td>${esc(c.className)}</td><td>${esc(c.period||"—")}</td><td>${esc(c.room||"—")}</td><td>${esc(c.notes||"—")}</td></tr>`).join("")||'<tr><td colspan="7" class="muted">No cover allocated.</td></tr>'}</tbody></table></div></div>`;
+}
+function saveCoverAssignment(){if(!["Admin","Staff"].includes(state.currentUser?.role))return showToast("Admin or Staff access required.");const absent=$("coverAbsent").value.trim(),teacher=$("coverTeacher").value.trim(),date=$("coverDate").value;if(!absent||!teacher||!date)return showToast("Complete the date and teacher fields.");state.coverAssignments.push({id:String(Date.now()),date,absent,teacher,className:$("coverClass").value,period:$("coverPeriod").value.trim(),room:$("coverRoom").value.trim(),notes:$("coverNotes").value.trim()});logAudit("Cover allocation created",date+" · "+teacher);saveData();renderCoverManager()}
+function renderStaffDashboard(){
+ const records=state.attendance.filter(a=>a.date===today),unread=(state.privateMessages||[]).filter(m=>m.toUsername===state.currentUser?.username&&!m.readAt).length,openPastoral=(state.pastoralCases||[]).filter(c=>c.status==="Open").length,upcoming=(state.schoolEvents||[]).filter(e=>e.date>=today).length;
+ $("content").innerHTML=featurePage("Staff dashboard","A daily workspace for registers, messages and follow-up.")+`<div class="grid stats">${stat("Registers recorded",new Set(records.map(a=>a.studentId)).size,"✓","#e8f7ef","Attendance entries today")}${stat("Unread messages",unread,"✉","#eaf0ff","Your inbox")}${stat("Open pastoral follow-ups",openPastoral,"♧","#fff5d9","Restricted demo records")}${stat("Upcoming events",upcoming,"▦","#e8f7ef","Calendar items")}</div><div class="grid two-col"><section class="panel"><div class="panel-head"><h3>Quick actions</h3></div><div class="panel-body" style="display:flex;gap:9px;flex-wrap:wrap"><button class="btn btn-outline" onclick="go('attendance')">Take register</button><button class="btn btn-outline" onclick="go('messages')">Open messages</button><button class="btn btn-outline" onclick="go('detentions')">Manage detentions</button><button class="btn btn-outline" onclick="go('calendar')">School calendar</button></div></section><section class="panel"><div class="panel-head"><h3>Today's priorities</h3></div><div class="panel-body"><p>• Complete attendance registers.</p><p>• Review unread messages.</p><p>• Check upcoming school events and assigned follow-ups.</p></div></section></div>`;
+}
+function renderAuditLog(){const rows=state.auditLog||[];$("content").innerHTML=featurePage("Audit log","Recent actions recorded by this demo. A production audit log must be server-side and tamper-resistant.",`<button class="btn btn-outline" onclick="exportAuditCSV()">Export CSV</button>`)+`<div class="notice" style="margin-bottom:14px">This is a browser-local demonstration log, not a security-grade audit trail.</div><div class="panel"><div class="panel-head"><h3>Recent activity</h3><span class="muted">${rows.length} entries</span></div><div class="table-wrap"><table><thead><tr><th>Time</th><th>User</th><th>Role</th><th>Action</th><th>Details</th></tr></thead><tbody>${rows.map(a=>`<tr><td>${esc(a.at)}</td><td>${esc(a.user)}</td><td>${esc(a.role)}</td><td>${esc(a.action)}</td><td>${esc(a.detail||"—")}</td></tr>`).join("")||'<tr><td colspan="5" class="muted">No actions logged in this demo yet.</td></tr>'}</tbody></table></div></div>`}
+function exportAuditCSV(){const rows=["Time,User,Role,Action,Details",...(state.auditLog||[]).map(a=>[a.at,a.user,a.role,a.action,a.detail].map(x=>'"'+String(x||"").replace(/"/g,'""')+'"').join(","))];downloadText("arbor-audit-demo.csv",rows.join("\n"),"text/csv")}
+function downloadText(filename,text,mime="text/plain"){const blob=new Blob([text],{type:mime}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+function renderGlobalSearch(){
+ $("content").innerHTML=featurePage("Search everything","Search students, staff accounts, classes, assignments, notices and calendar events.")+`<div class="panel"><div class="panel-body"><div class="field"><label for="globalSearchInput">Search</label><input id="globalSearchInput" placeholder="Type a name, class, subject, message title or event…" value="${esc(state.globalSearchQuery||"")}"></div><div id="globalSearchResults"></div></div></div>`;
+ const el=$("globalSearchInput");const run=()=>{state.globalSearchQuery=el.value;const q=el.value.trim().toLowerCase();const results=[];if(q){state.students.filter(s=>(s.first+" "+s.last+" "+s.id+" "+s.className+" "+s.year).toLowerCase().includes(q)).forEach(s=>results.push({type:"Student",title:s.first+" "+s.last,sub:s.id+" · "+s.className,action:`viewStudent('${esc(s.id)}')`,page:"students"}));(state.accounts||[]).filter(a=>(a.name+" "+a.username+" "+a.role).toLowerCase().includes(q)).forEach(a=>results.push({type:"Account",title:a.name,sub:a.username+" · "+a.role,action:"go('users')",page:"users"}));(state.assignments||[]).filter(a=>(a.title+" "+a.subject+" "+a.className).toLowerCase().includes(q)).forEach(a=>results.push({type:"Assignment",title:a.title,sub:(a.subject||"")+" · "+(a.dueDate||"No due date"),page:"learning"}));(state.schoolEvents||[]).filter(e=>(e.title+" "+e.details).toLowerCase().includes(q)).forEach(e=>results.push({type:"Calendar",title:e.title,sub:e.date+" · "+e.audience,page:"calendar"}));(state.notices||[]).filter(n=>(n.title+" "+n.body).toLowerCase().includes(q)).forEach(n=>results.push({type:"Notice",title:n.title,sub:n.createdAt||"Notice board",page:"noticeboard"}));}
+ $("globalSearchResults").innerHTML=q?(results.length?`<div class="table-wrap"><table><thead><tr><th>Type</th><th>Result</th><th>Details</th><th>Open</th></tr></thead><tbody>${results.slice(0,100).map((r,i)=>`<tr><td>${esc(r.type)}</td><td><strong>${esc(r.title||"")}</strong></td><td>${esc(r.sub||"")}</td><td><button class="btn btn-outline btn-sm" onclick="${r.action||`go('${r.page}')`}">Open</button></td></tr>`).join("")}</tbody></table></div>`:'<div class="empty">No matches found.</div>'):'<div class="empty">Enter a search term to begin.</div>';};el.oninput=run;run();
+}
+function renderPermissions(){
+ const roles=["Admin","Staff","Teacher","Student","Parent"],pages=["attendanceDashboard","rewards","pastoral","calendar","detentions","cover","staffdashboard","audit","globalSearch","parentportal"],labels={attendanceDashboard:"Attendance insights",rewards:"Rewards centre",pastoral:"Safeguarding & pastoral",calendar:"School calendar",detentions:"Detentions",cover:"Cover manager",staffdashboard:"Staff dashboard",audit:"Audit log",globalSearch:"Search everything",parentportal:"Parent portal"};
+ $("content").innerHTML=featurePage("Permissions","Configure demo access by role. Admin access is always retained.")+`<div class="notice" style="margin-bottom:14px">These settings control navigation and page access in this prototype only. A production system must enforce every permission in the backend and database.</div><div class="panel"><div class="table-wrap"><table><thead><tr><th>Feature</th>${roles.map(r=>`<th>${r}</th>`).join("")}</tr></thead><tbody>${pages.map(p=>{const defaults={attendanceDashboard:["Admin","Staff","Teacher"],rewards:["Admin","Staff","Teacher"],pastoral:["Admin","Staff"],calendar:["Admin","Staff","Teacher","Student","Parent"],detentions:["Admin","Staff","Teacher"],cover:["Admin","Staff"],staffdashboard:["Admin","Staff","Teacher"],audit:["Admin"],globalSearch:roles,parentportal:["Parent"]};const active=state.permissionConfig[p]||defaults[p];return `<tr><td><strong>${labels[p]}</strong></td>${roles.map(r=>`<td><input type="checkbox" data-perm-page="${p}" data-perm-role="${r}" ${r==="Admin"||active.includes(r)?"checked":""} ${r==="Admin"?"disabled":""}></td>`).join("")}</tr>`}).join("")}</tbody></table></div><div class="panel-body" style="display:flex;justify-content:flex-end"><button class="btn btn-primary" onclick="savePermissions()">Save permissions</button></div></div>`;
+}
+function savePermissions(){if(!isAdmin())return showToast("Admin access required.");const cfg={};document.querySelectorAll("[data-perm-page]").forEach(el=>{const p=el.dataset.permPage,r=el.dataset.permRole;cfg[p]=cfg[p]||[];if(el.checked&&!cfg[p].includes(r))cfg[p].push(r)});state.permissionConfig=cfg;logAudit("Permissions updated","Demo role permissions changed");saveData();setupRoleNav();showToast("Demo permissions saved.");renderPermissions()}
+function renderParentPortal(){
+ const u=state.currentUser||{},s=u.studentId?student(u.studentId):null;
+ if(!s){$("content").innerHTML=featurePage("Parent portal","Parent and carer view for linked student records.")+`<div class="notice">This demo parent account is not linked to a student. An Admin can create a Parent / carer account and link it to a fictional student.</div>`;return;}
+ const t=totals(s.id),att=state.attendance.filter(a=>a.studentId===s.id),present=att.filter(a=>a.status==="Present").length,pct=att.length?Math.round(present/att.length*100):null,assign=state.assignments.filter(a=>a.studentId===s.id||a.className===s.className),events=(state.schoolEvents||[]).filter(e=>["Everyone","Parents"].includes(e.audience)&&e.date>=today),notices=(state.notices||[]).filter(n=>!n.expires||n.expires>=today),alerts=(state.alerts||[]).filter(a=>[4,5].includes(Number(a.category))&&(!a.expires||a.expires>=today));
+ $("content").innerHTML=featurePage("Parent portal",`Linked student: ${esc(s.first+" "+s.last)} · ${esc(s.year)} · ${esc(s.className)}`)+`<div class="grid stats">${stat("Attendance",pct===null?"—":pct+"%","✓","#e8f7ef",att.length+" records")}${stat("Positive points",t.pos,"★","#e8f7ef","Positive points")}${stat("Assignments due",assign.filter(a=>!a.completed).length,"▣","#eaf0ff","Incomplete assignments")}${stat("Upcoming events",events.length,"▦","#fff5d9","Shared with parents")}</div><div class="grid two-col"><section class="panel"><div class="panel-head"><h3>Recent attendance</h3></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Status</th></tr></thead><tbody>${att.slice(-8).reverse().map(a=>`<tr><td>${esc(a.date)}</td><td>${esc(a.status)}</td></tr>`).join("")||'<tr><td colspan="2">No attendance records yet.</td></tr>'}</tbody></table></div></section><section class="panel"><div class="panel-head"><h3>Assignments</h3></div><div class="panel-body">${assign.map(a=>`<div class="activity-item"><div class="activity-copy"><strong>${esc(a.title)}</strong><small>Due ${esc(a.dueDate||"—")}</small></div><span class="pill ${a.completed?"pill-positive":"pill-amber"}">${a.completed?"Completed":"To do"}</span></div>`).join("")||'<div class="empty">No assignments.</div>'}</div></section></div><div class="grid two-col" style="margin-top:16px"><section class="panel"><div class="panel-head"><h3>Student alerts</h3></div><div class="panel-body">${alerts.map(a=>`<div class="alert-card" style="margin-bottom:10px"><strong>${esc(a.title)}</strong><p>${esc(a.body)}</p></div>`).join("")||'<div class="muted">No current student alerts.</div>'}</div></section><section class="panel"><div class="panel-head"><h3>Notice board</h3></div><div class="panel-body">${notices.slice(0,5).map(n=>`<div class="notice-card" style="margin-bottom:10px"><strong>${esc(n.title)}</strong><p>${esc(n.body)}</p></div>`).join("")||'<div class="muted">No notices.</div>'}</div></section></div>`;
+}
+
+
+// Demo-account convenience: allow a Parent account to be linked to a student who already has a Student login.
+saveUser=function(){
+ const name=$("uName").value.trim(),username=$("uUsername").value.trim(),password=$("uPassword").value,role=$("uRole").value,studentId=$("uStudent").value;
+ if(!name||!username||password.length<6)return showToast("Enter a name, username and password of at least 6 characters.");
+ if(state.accounts.some(a=>a.username.toLowerCase()===username.toLowerCase()))return showToast("That username is already in use.");
+ if(["Student","Parent"].includes(role)&&!studentId)return showToast("Link a student record for this account.");
+ if(role==="Student"&&studentId&&state.accounts.some(a=>a.studentId===studentId&&a.role==="Student"))return showToast("That student already has a student login.");
+ state.accounts.push({name,username,password,role,studentId});logAudit("Account created",username+" · "+role);saveData();closeModal();renderUsers();showToast("Demo account created.");
+};
+// Restrict global search results to records the signed-in demo role is meant to see.
+renderGlobalSearch=function(){
+ $("content").innerHTML=featurePage("Search everything","Search permitted student records, staff accounts, assignments, notices and calendar events.")+`<div class="panel"><div class="panel-body"><div class="field"><label for="globalSearchInput">Search</label><input id="globalSearchInput" placeholder="Type a name, class, subject, message title or event…" value="${esc(state.globalSearchQuery||"")}"></div><div id="globalSearchResults"></div></div></div>`;
+ const el=$("globalSearchInput");const run=()=>{state.globalSearchQuery=el.value;const q=el.value.trim().toLowerCase();const results=[];const role=state.currentUser?.role;const linked=state.currentUser?.studentId;
+ if(q){
+   state.students.filter(s=>(staffRole()||s.id===linked)&&(`${s.first} ${s.last} ${s.id} ${s.className} ${s.year}`).toLowerCase().includes(q)).forEach(s=>results.push({type:"Student",title:s.first+" "+s.last,sub:s.id+" · "+s.className,action:staffRole()?`viewStudent('${esc(s.id)}')`:"go('studentprofile')",page:staffRole()?"students":"studentprofile"}));
+   if(staffRole())(state.accounts||[]).filter(a=>(a.name+" "+a.username+" "+a.role).toLowerCase().includes(q)).forEach(a=>results.push({type:"Account",title:a.name,sub:a.username+" · "+a.role,action:isAdmin()?"go('users')":"go('staffdashboard')",page:isAdmin()?"users":"staffdashboard"}));
+   (state.assignments||[]).filter(a=>(staffRole()||(a.studentId===linked||a.className===student(linked)?.className))&&(a.title+" "+a.subject+" "+a.className).toLowerCase().includes(q)).forEach(a=>results.push({type:"Assignment",title:a.title,sub:(a.subject||"")+" · "+(a.dueDate||"No due date"),page:"learning"}));
+   (state.schoolEvents||[]).filter(e=>(e.audience==="Everyone"||(e.audience==="Students"&&role==="Student")||(e.audience==="Parents"&&role==="Parent")||(e.audience==="Staff"&&staffRole()))&&(e.title+" "+e.details).toLowerCase().includes(q)).forEach(e=>results.push({type:"Calendar",title:e.title,sub:e.date+" · "+e.audience,page:"calendar"}));
+   (state.notices||[]).filter(n=>(n.title+" "+n.body).toLowerCase().includes(q)).forEach(n=>results.push({type:"Notice",title:n.title,sub:n.createdAt||"Notice board",page:"noticeboard"}));
+   (state.privateMessages||[]).filter(m=>(m.fromUsername===state.currentUser?.username||m.toUsername===state.currentUser?.username)&&(m.subject+" "+m.body).toLowerCase().includes(q)).forEach(m=>results.push({type:"Message",title:m.subject,sub:(m.fromUsername===state.currentUser?.username?"Sent":"Received")+" · "+(m.sentLabel||""),page:"messages"}));
+ }
+ $("globalSearchResults").innerHTML=q?(results.length?`<div class="table-wrap"><table><thead><tr><th>Type</th><th>Result</th><th>Details</th><th>Open</th></tr></thead><tbody>${results.slice(0,100).map(r=>`<tr><td>${esc(r.type)}</td><td><strong>${esc(r.title||"")}</strong></td><td>${esc(r.sub||"")}</td><td><button class="btn btn-outline btn-sm" onclick="${r.action||`go('${r.page}')`}">Open</button></td></tr>`).join("")}</tbody></table></div>`:'<div class="empty">No matches found.</div>'):'<div class="empty">Enter a search term to begin.</div>';
+ };el.oninput=run;run();
+};
+
+
+// Organise the sidebar into collapsible groups without changing page behaviour.
+const SIDEBAR_GROUPS = [
+  {id:"overview", title:"Overview", pages:["dashboard","staffdashboard"]},
+  {id:"students", title:"Students", pages:["students","studentprofile","studentpoints","studenttimetable","studentachievements","parentportal"]},
+  {id:"teaching", title:"Teaching & learning", pages:["attendance","attendanceDashboard","learning","cover","calendar"]},
+  {id:"behaviour", title:"Behaviour & pastoral", pages:["behaviour","award","rewards","detentions","pastoral"]},
+  {id:"communication", title:"Communication", pages:["alerts","noticeboard","messages"]},
+  {id:"management", title:"School management", pages:["classes","reports","settings","users","permissions","audit","globalSearch"]}
+];
+function organiseSidebar(){
+  const sidebar=$("sidebar"); if(!sidebar)return;
+  const brand=sidebar.querySelector(".side-brand"), bottom=sidebar.querySelector(".side-bottom");
+  if(!brand||!bottom)return;
+  const buttons=[...sidebar.querySelectorAll(".nav-btn")];
+  sidebar.querySelectorAll(":scope > .nav-label, :scope > .nav-group").forEach(el=>el.remove());
+  const byPage=new Map(buttons.map(b=>[b.dataset.page,b]));
+  const assigned=new Set();
+  SIDEBAR_GROUPS.forEach(group=>{
+    const items=group.pages.map(page=>byPage.get(page)).filter(Boolean);
+    if(!items.length)return;
+    const details=document.createElement("details"); details.className="nav-group"; details.dataset.group=group.id;
+    const summary=document.createElement("summary"); summary.textContent=group.title;
+    const list=document.createElement("div"); list.className="nav-group-items";
+    items.forEach(button=>{list.appendChild(button);assigned.add(button.dataset.page);});
+    details.append(summary,list); sidebar.insertBefore(details,bottom);
+  });
+  const leftovers=buttons.filter(b=>!assigned.has(b.dataset.page));
+  if(leftovers.length){
+    const details=document.createElement("details");details.className="nav-group";details.dataset.group="other";
+    const summary=document.createElement("summary");summary.textContent="Other";
+    const list=document.createElement("div");list.className="nav-group-items";leftovers.forEach(b=>list.appendChild(b));details.append(summary,list);sidebar.insertBefore(details,bottom);
+  }
+  sidebar.querySelectorAll(".nav-group").forEach(group=>{
+    const visible=[...group.querySelectorAll(".nav-btn")].filter(b=>!b.classList.contains("hidden"));
+    group.hidden=visible.length===0;
+    const hasActive=visible.some(b=>b.dataset.page===state.currentPage||b.classList.contains("active"));
+    group.open=hasActive || group.dataset.group==="overview";
+  });
+}
+const _setupRoleNavWithGroups=setupRoleNav;
+setupRoleNav=function(){_setupRoleNavWithGroups();organiseSidebar();};
+const _goWithSidebarGroups=go;
+go=function(page){_goWithSidebarGroups(page);document.querySelectorAll(".nav-group").forEach(group=>{const active=group.querySelector(`.nav-btn[data-page="${page}"]`);if(active&&!active.classList.contains("hidden"))group.open=true;});};
+
+Object.assign(pageTitles,{attendanceDashboard:"Attendance insights",rewards:"Rewards centre",pastoral:"Safeguarding & pastoral",calendar:"School calendar",detentions:"Detentions",cover:"Cover manager",staffdashboard:"Staff dashboard",audit:"Audit log",globalSearch:"Search everything",permissions:"Permissions",parentportal:"Parent portal"});
+
+// Parent/carer account creation: expose the Parent role in the modal and require a linked student.
+openUserModal=function(){
+  openModal("Add account",`<div class="form-grid">
+    <div class="field"><label>Full name *</label><input id="uName" required autocomplete="off"></div>
+    <div class="field"><label>Username *</label><input id="uUsername" required autocomplete="off"></div>
+    <div class="field"><label>Password *</label><input id="uPassword" type="password" required minlength="6" autocomplete="new-password"></div>
+    <div class="field"><label>Account type *</label><select id="uRole" onchange="updateAccountLinkField()"><option value="Teacher">Teacher</option><option value="Staff">Staff</option><option value="Admin">Admin</option><option value="Student">Student</option><option value="Parent">Parent / carer</option></select></div>
+    <div class="field span-2" id="uStudentField"><label id="uStudentLabel">Link student record</label><select id="uStudent"><option value="">Choose a student…</option>${state.students.map(s=>`<option value="${esc(s.id)}">${esc(s.first+" "+s.last)} · ${esc(s.id)} · ${esc(s.className)}</option>`).join("")}</select><small class="muted" id="uStudentHelp">Student and parent accounts must be linked to a student record. A parent can be linked to a student who already has their own student login.</small></div>
+  </div>`,`<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveUser()">Create account</button>`);
+  updateAccountLinkField();
+};
+updateAccountLinkField=function(){
+  const role=$("uRole")?.value,field=$("uStudentField"),sel=$("uStudent"),label=$("uStudentLabel"),help=$("uStudentHelp");
+  if(!field||!sel)return;
+  const linkedRequired=role==="Student"||role==="Parent";
+  field.classList.toggle("hidden",!linkedRequired);
+  sel.required=linkedRequired;
+  label.textContent=role==="Parent"?"Link to their child *":"Link student record *";
+  help.textContent=role==="Parent"?"Choose the child this parent or carer is allowed to view. Multiple parent accounts can link to the same student.":"Student accounts must be linked to a student record.";
+};
+
+
+// Parent portal tabs: each tab switches to a distinct, working parent view.
+let parentPortalActiveTab = "overview";
+function setParentPortalTab(tab){
+  const allowed=["overview","attendance","points","assignments","calendar","profile"];
+  parentPortalActiveTab=allowed.includes(tab)?tab:"overview";
+  renderParentPortal();
+}
+renderParentPortal=function(){
+  const u=state.currentUser||{},s=u.studentId?student(u.studentId):null;
+  const tabs=[["overview","Overview"],["attendance","Attendance"],["points","Points"],["assignments","Assignments"],["calendar","Calendar & notices"],["profile","Student profile"]];
+  const tabBar=`<div class="parent-tabs" role="tablist" aria-label="Parent portal sections">${tabs.map(([id,label])=>`<button type="button" role="tab" aria-selected="${parentPortalActiveTab===id}" class="btn ${parentPortalActiveTab===id?"btn-primary":"btn-outline"} parent-tab" onclick="setParentPortalTab('${id}')">${label}</button>`).join("")}</div>`;
+  if(!s){
+    $("content").innerHTML=featurePage("Parent portal","Parent and carer view for linked student records.")+tabBar+`<div class="notice">This parent account is not linked to a student. An Admin can edit the account under School Management → Users and link it to a fictional student.</div>`;
+    return;
+  }
+  const t=totals(s.id),att=(state.attendance||[]).filter(a=>a.studentId===s.id),
+    present=att.filter(a=>a.status==="Present").length,
+    pct=att.length?Math.round(present/att.length*100):null,
+    assign=(state.assignments||[]).filter(a=>a.studentId===s.id||(!a.studentId&&a.className===s.className)),
+    entries=(state.entries||[]).filter(e=>e.studentId===s.id).sort((a,b)=>String(b.date||"").localeCompare(String(a.date||""))),
+    events=(state.schoolEvents||[]).filter(e=>["Everyone","Parents"].includes(e.audience)&&(!e.date||e.date>=today)),
+    notices=(state.notices||[]).filter(n=>!n.expires||n.expires>=today),
+    alerts=(state.alerts||[]).filter(a=>[4,5].includes(Number(a.category))&&(!a.expires||a.expires>=today));
+  let body="";
+  if(parentPortalActiveTab==="overview"){
+    body=`<div class="grid stats">${stat("Attendance",pct===null?"—":pct+"%","✓","#e8f7ef",att.length+" records")}${stat("Positive points",t.pos,"★","#e8f7ef","Positive points")}${stat("Assignments due",assign.filter(a=>!a.completed).length,"▣","#eaf0ff","Incomplete assignments")}${stat("Upcoming events",events.length,"▦","#fff5d9","Shared with parents")}</div>
+    <div class="grid two-col"><section class="panel"><div class="panel-head"><h3>Recent attendance</h3><button class="btn btn-outline btn-sm" onclick="setParentPortalTab('attendance')">View all</button></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Status</th></tr></thead><tbody>${att.slice(-5).reverse().map(a=>`<tr><td>${esc(a.date)}</td><td>${esc(a.status)}</td></tr>`).join("")||'<tr><td colspan="2">No attendance records yet.</td></tr>'}</tbody></table></div></section>
+    <section class="panel"><div class="panel-head"><h3>Assignments</h3><button class="btn btn-outline btn-sm" onclick="setParentPortalTab('assignments')">View all</button></div><div class="panel-body">${assign.slice(0,5).map(a=>`<div class="activity-item"><div class="activity-copy"><strong>${esc(a.title)}</strong><small>Due ${esc(a.dueDate||"—")}</small></div><span class="pill ${a.completed?"pill-positive":"pill-amber"}">${a.completed?"Completed":"To do"}</span></div>`).join("")||'<div class="empty">No assignments.</div>'}</div></section></div>
+    <div class="grid two-col" style="margin-top:16px"><section class="panel"><div class="panel-head"><h3>Student alerts</h3></div><div class="panel-body">${alerts.map(a=>`<div class="alert-card" style="margin-bottom:10px"><strong>${esc(a.title)}</strong><p>${esc(a.body)}</p></div>`).join("")||'<div class="muted">No current student alerts.</div>'}</div></section><section class="panel"><div class="panel-head"><h3>Notice board</h3></div><div class="panel-body">${notices.slice(0,5).map(n=>`<div class="notice-card" style="margin-bottom:10px"><strong>${esc(n.title)}</strong><p>${esc(n.body)}</p></div>`).join("")||'<div class="muted">No notices.</div>'}</div></section></div>`;
+  } else if(parentPortalActiveTab==="attendance"){
+    body=`<div class="grid stats">${stat("Attendance",pct===null?"—":pct+"%","✓","#e8f7ef",att.length+" recorded sessions")}${stat("Present",present,"✓","#e8f7ef","Marked present")}${stat("Absent",att.filter(a=>a.status==="Absent").length,"!","#fff0f0","Recorded absences")}${stat("Late",att.filter(a=>a.status==="Late").length,"◷","#fff5d9","Late arrivals")}</div><div class="panel"><div class="panel-head"><h3>Attendance history</h3></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Status</th><th>Session</th></tr></thead><tbody>${att.slice().sort((a,b)=>String(b.date||"").localeCompare(String(a.date||""))).map(a=>`<tr><td>${esc(a.date||"—")}</td><td>${esc(a.status||"—")}</td><td>${esc(a.period||a.lesson||"—")}</td></tr>`).join("")||'<tr><td colspan="3">No attendance records yet.</td></tr>'}</tbody></table></div></div>`;
+  } else if(parentPortalActiveTab==="points"){
+    body=`<div class="grid stats">${stat("Positive points",t.pos,"★","#e8f7ef","Total positive points")}${stat("Negative points",t.neg,"!","#fff0f0","Total negative points")}${stat("Net points",t.net,"∑","#eaf0ff","Overall total")}</div><div class="panel"><div class="panel-head"><h3>Points history</h3></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Type</th><th>Reason</th><th>Points</th></tr></thead><tbody>${entries.map(e=>`<tr><td>${esc(e.date||"—")}</td><td>${esc(e.type||"—")}</td><td>${esc(e.reason||e.description||"—")}</td><td>${e.type==="negative"?"−":"+"}${Number(e.points)||0}</td></tr>`).join("")||'<tr><td colspan="4">No points entries yet.</td></tr>'}</tbody></table></div></div>`;
+  } else if(parentPortalActiveTab==="assignments"){
+    body=`<div class="panel"><div class="panel-head"><h3>Assignments and homework</h3><span class="muted">${assign.length} items</span></div><div class="table-wrap"><table><thead><tr><th>Assignment</th><th>Subject</th><th>Due date</th><th>Status</th></tr></thead><tbody>${assign.map(a=>`<tr><td><strong>${esc(a.title||"Assignment")}</strong></td><td>${esc(a.subject||"—")}</td><td>${esc(a.dueDate||"—")}</td><td><span class="pill ${a.completed?"pill-positive":"pill-amber"}">${a.completed?"Completed":"To do"}</span></td></tr>`).join("")||'<tr><td colspan="4">No assignments available.</td></tr>'}</tbody></table></div></div>`;
+  } else if(parentPortalActiveTab==="calendar"){
+    body=`<div class="grid two-col"><section class="panel"><div class="panel-head"><h3>Upcoming events</h3></div><div class="panel-body">${events.slice().sort((a,b)=>String(a.date||"").localeCompare(String(b.date||""))).map(e=>`<div class="activity-item"><div class="activity-copy"><strong>${esc(e.title)}</strong><small>${esc(e.date||"Date to be confirmed")} · ${esc(e.audience||"Everyone")}</small><p>${esc(e.details||"")}</p></div></div>`).join("")||'<div class="empty">No upcoming events.</div>'}</div></section><section class="panel"><div class="panel-head"><h3>School notices</h3></div><div class="panel-body">${notices.map(n=>`<div class="notice-card" style="margin-bottom:10px"><strong>${esc(n.title)}</strong><p>${esc(n.body)}</p></div>`).join("")||'<div class="empty">No current notices.</div>'}</div></section></div>`;
+  } else {
+    body=`<div class="panel"><div class="panel-head"><h3>Student details</h3></div><div class="panel-body"><div class="grid two-col"><div><small class="muted">Full name</small><p><strong>${esc(s.first+" "+s.last)}</strong></p></div><div><small class="muted">Student ID</small><p><strong>${esc(s.id)}</strong></p></div><div><small class="muted">Year group</small><p><strong>${esc(s.year||"—")}</strong></p></div><div><small class="muted">Class</small><p><strong>${esc(s.className||"—")}</strong></p></div><div><small class="muted">House</small><p><strong>${esc(s.house||"—")}</strong></p></div><div><small class="muted">Status</small><p><strong>${esc(s.status||"Active")}</strong></p></div></div><div class="notice">This is a demo parent view. Contact details and sensitive records should only be shown after appropriate school verification and access controls.</div></div></div>`;
+  }
+  $("content").innerHTML=featurePage("Parent portal",`Linked student: ${esc(s.first+" "+s.last)} · ${esc(s.year)} · ${esc(s.className)}`)+tabBar+body;
+};
+
+loadData();
+const savedLogin=sessionStorage.getItem("schoolMISLoggedIn");
+if(savedLogin){const account=state.accounts.find(a=>a.username===savedLogin);if(account){state.currentUser=account;$("loginScreen").classList.add("hidden");$("app").classList.remove("hidden");setupRoleNav();go(staffRole()?"dashboard":"studenthome");}}
+else { $("username").value="admin"; $("password").value="School123!"; }
+</script>
+
+<style>
+#arbor-data-tools {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 99999;
+  font-family: Arial, sans-serif;
+}
+#arbor-data-toggle {
+  background: #2563eb;
+  color: white;
+  border: 0;
+  border-radius: 12px;
+  padding: 13px 18px;
+  font-weight: bold;
+  box-shadow: 0 5px 20px #1e40af40;
+  cursor: pointer;
+}
+#arbor-data-panel {
+  display: none;
+  width: min(340px, calc(100vw - 36px));
+  margin-bottom: 10px;
+  padding: 19px;
+  border: 1px solid #dbe5f0;
+  border-radius: 16px;
+  background: white;
+  color: #172554;
+  box-shadow: 0 12px 40px #17255425;
+}
+#arbor-data-panel.open { display: block; }
+#arbor-data-panel h3 { margin: 0 0 6px; }
+#arbor-data-panel p { font-size: 13px; color: #64748b; }
+.arbor-data-action {
+  display: block;
+  width: 100%;
+  padding: 11px;
+  margin-top: 9px;
+  border: 1px solid #dbe5f0;
+  border-radius: 9px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: bold;
+  text-align: left;
+  cursor: pointer;
+}
+.arbor-data-action:hover { background: #dbeafe; }
+#arbor-data-status {
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+</style>
+
+<div id="arbor-data-tools">
+  <div id="arbor-data-panel">
+    <h3>Data Management</h3>
+    <p>Save and restore your Arbor MIS data offline.</p>
+
+    <button class="arbor-data-action" onclick="arborSaveData()">
+      ↓ Save / Export Data
+    </button>
+
+    <button class="arbor-data-action" onclick="arborBackupData()">
+      🛡 Create Backup
+    </button>
+
+    <button class="arbor-data-action" onclick="arborChooseImport()">
+      ↑ Load / Restore Data
+    </button>
+
+    <input
+      id="arbor-data-file"
+      type="file"
+      accept=".json,application/json"
+      hidden
+      onchange="arborImportData(event)"
+    >
+
+    <p id="arbor-data-status" role="status">
+      Ready. Export a backup before restoring data.
+    </p>
+  </div>
+
+  <button
+    id="arbor-data-toggle"
+    onclick="arborToggleDataPanel()"
+    aria-expanded="false"
+  >
+    ⚙ Data Management
+  </button>
+</div>
+
+<script>
+(function () {
+  const STORAGE_PREFIX = "arbor-mis-backup";
+
+  window.arborToggleDataPanel = function () {
+    const panel = document.getElementById("arbor-data-panel");
+    const button = document.getElementById("arbor-data-toggle");
+    const open = panel.classList.toggle("open");
+    button.setAttribute("aria-expanded", String(open));
+  };
+
+  function setStatus(message) {
+    document.getElementById("arbor-data-status").textContent = message;
+  }
+
+  function getStoredData() {
+    const data = {};
+
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key !== null) {
+        data[key] = localStorage.getItem(key);
+      }
+    }
+
+    return data;
+  }
+
+  function downloadJSON(data, filename) {
+    const blob = new Blob(
+      [JSON.stringify(data, null, 2)],
+      { type: "application/json" }
+    );
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function makeBackup() {
+    return {
+      format: "arbor-mis-json-backup",
+      version: 1,
+      createdAt: new Date().toISOString(),
+      storageType: "localStorage",
+      data: getStoredData()
+    };
+  }
+
+  window.arborSaveData = function () {
+    const backup = makeBackup();
+    const date = new Date().toISOString().slice(0, 10);
+
+    downloadJSON(backup, "arbor-mis-data-" + date + ".json");
+    setStatus("Export prepared. Check your Downloads folder.");
+  };
+
+  window.arborBackupData = function () {
+    const backup = makeBackup();
+    const date = new Date().toISOString()
+      .replace(/[:.]/g, "-");
+
+    downloadJSON(backup, STORAGE_PREFIX + "-" + date + ".json");
+    setStatus("Backup prepared. Keep the downloaded file somewhere safe.");
+  };
+
+  window.arborChooseImport = function () {
+    const input = document.getElementById("arbor-data-file");
+    input.value = "";
+    input.click();
+  };
+
+  window.arborImportData = async function (event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const backup = JSON.parse(text);
+
+      if (
+        !backup ||
+        backup.format !== "arbor-mis-json-backup" ||
+        backup.version !== 1 ||
+        !backup.data ||
+        typeof backup.data !== "object" ||
+        Array.isArray(backup.data)
+      ) {
+        throw new Error("This is not a recognised Arbor MIS backup.");
+      }
+
+      for (const [key, value] of Object.entries(backup.data)) {
+        if (
+          typeof key !== "string" ||
+          typeof value !== "string" ||
+          key === "__proto__"
+        ) {
+          throw new Error("The backup contains invalid data.");
+        }
+      }
+
+      const currentData = getStoredData();
+      const confirmed = confirm(
+        "Restore this backup?\n\n" +
+        "This will replace the current browser's saved data " +
+        "with the data in the selected file.\n\n" +
+        "A backup of the current data will download first."
+      );
+
+      if (!confirmed) {
+        setStatus("Restore cancelled. Current data was not changed.");
+        return;
+      }
+
+      downloadJSON(
+        {
+          format: "arbor-mis-json-backup",
+          version: 1,
+          createdAt: new Date().toISOString(),
+          storageType: "localStorage",
+          data: currentData
+        },
+        "arbor-mis-before-restore-" +
+          new Date().toISOString().slice(0, 10) + ".json"
+      );
+
+      // Save the current state in memory in case importing fails.
+      const previous = getStoredData();
+
+      try {
+        localStorage.clear();
+
+        for (const [key, value] of Object.entries(backup.data)) {
+          localStorage.setItem(key, value);
+        }
+      } catch (error) {
+        localStorage.clear();
+
+        for (const [key, value] of Object.entries(previous)) {
+          localStorage.setItem(key, value);
+        }
+
+        throw error;
+      }
+
+      setStatus("Restore complete. Reloading the MIS…");
+      alert(
+        "Data restored successfully. The MIS will reload to display the restored data."
+      );
+      location.reload();
+
+    } catch (error) {
+      setStatus("Could not restore: " + error.message);
+      alert("Restore failed: " + error.message);
+    } finally {
+      event.target.value = "";
+    }
+  };
+})();
+</script>
+
+</body>
+</html>
