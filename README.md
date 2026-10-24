@@ -1,1 +1,3 @@
-Open `index.html`, this contains the main site. When in the file, click on open the official MIS at the top right of the screen. Then on the bottom right, you should see "Data management". Click on the button and press "Load / Restore data" and when prompted, open `arbor-mis-data-2026-10-24.json`. This loads all accounts and premade status and user data. This will give you an Idea of what our MIS is like.
+Open `index.html`, this contains the main site. When in the file, click on open the official MIS at the top right of the screen. Then on the bottom right, you should see "Data management". Click on the button and press "Load / Restore data" and when prompted, open `arbor-mis-data-2026-10-24.json`. This loads all accounts and premade status and user data. This will give you an Idea of what our MIS is like.<br>
+**IMPORTANT:**<br>
+All the files must be put into the same folder to work together!
