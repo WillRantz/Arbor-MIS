@@ -30,6 +30,14 @@
 .alert-card,.notice-card{border-radius:12px;padding:15px 17px;margin:12px 0;border:1px solid var(--line);border-left:5px solid var(--alert-color,#c53b45);background:var(--alert-bg,#fff0f0)}
 .alert-card h3,.notice-card h3{margin:0 0 7px;font-size:15px}.message-meta{font-size:11px;color:var(--muted);margin-top:10px;display:flex;gap:10px;flex-wrap:wrap}.message-body{font-size:13px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}.message-actions{display:flex;gap:7px;align-items:center;margin-top:10px}.message-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}.message-tabs .btn{border-radius:9px}
 
+
+.login-loading{position:fixed;inset:0;z-index:9999;background:#fff;display:flex;align-items:center;justify-content:center}
+.login-loading-inner{width:min(260px,72vw);display:flex;flex-direction:column;align-items:center;gap:24px}
+.login-loading-logo{width:76px;height:76px;border-radius:21px;background:#3767d6;color:#fff;display:grid;place-items:center;font-size:38px;font-weight:700;box-shadow:0 8px 24px rgba(55,103,214,.18)}
+.login-loading-track{height:6px;width:100%;border-radius:99px;background:#e8eefb;overflow:hidden}
+.login-loading-progress{height:100%;width:0;background:#3767d6;border-radius:99px;animation:none}
+@keyframes loginProgress{from{width:0}to{width:100%}}
+
 </style>
 </head>
 <body>
@@ -291,7 +299,7 @@ function deleteUser(i){if(!isAdmin()||!confirm("Remove this account?"))return;st
 function manageStudentStatus(id,status){if(!isAdmin())return showToast("Only an admin can suspend or expel students.");const s=student(id);if(!confirm(`Set ${s.first} ${s.last} to ${status}? This will restrict their student login.`))return;s.status=status;saveData();showToast(`Student status updated: ${status}.`);renderStudents();}
 const originalStudentRow=studentRow;
 studentRow=function(s){const t=totals(s.id);return `<tr><td><div class="student-cell"><div class="mini-avatar">${esc(initials(s))}</div><div><div class="student-name">${esc(s.first+" "+s.last)}</div><div class="subline">${esc(s.house||"No house")}</div></div></div></td><td>${esc(s.id)}</td><td>${esc(s.year)}</td><td>${esc(s.className)}</td><td style="color:var(--green);font-weight:800">+${t.pos}</td><td style="color:var(--red);font-weight:800">−${t.neg}</td><td style="font-weight:800">${t.net}</td><td><span class="pill ${s.status==="Active"?"pill-positive":"pill-negative"}">${esc(s.status||"Active")}</span></td><td><button class="btn btn-outline btn-sm" onclick="viewStudent('${s.id}')">Profile</button> <button class="btn btn-outline btn-sm" onclick="openStudentModal('${s.id}')">Edit</button> ${isAdmin()?`<button class="btn btn-outline btn-sm" onclick="manageStudentStatus('${s.id}','Suspended')">Suspend</button> <button class="btn btn-red btn-sm" onclick="manageStudentStatus('${s.id}','Expelled')">Expel</button> ${s.status!=="Active"?`<button class="btn btn-green btn-sm" onclick="manageStudentStatus('${s.id}','Active')">Reinstate</button>`:""}`:""}</td></tr>`;}
-$("loginForm").addEventListener("submit",e=>{e.preventDefault();const u=$("username").value.trim(),p=$("password").value.trim();const account=state.accounts.find(a=>String(a.username||"").trim().toLowerCase()===u.toLowerCase()&&String(a.password??"").trim()===p);if(!account){$("loginError").textContent="Incorrect username or password.";return;}if(account.studentId){const st=student(account.studentId);if(st.status==="Suspended"||st.status==="Expelled"){ $("loginError").textContent=`This account is ${st.status.toLowerCase()}. Please contact the school office.`;return;}}state.currentUser=account;sessionStorage.setItem("schoolMISLoggedIn",account.username);$("loginScreen").classList.add("hidden");$("app").classList.remove("hidden");loadData();state.currentUser=state.accounts.find(a=>a.username===account.username)||account;setupRoleNav();go(staffRole()?"dashboard":"studenthome");});
+$("loginForm").addEventListener("submit",e=>{e.preventDefault();const u=$("username").value.trim(),p=$("password").value.trim();const account=state.accounts.find(a=>String(a.username||"").trim().toLowerCase()===u.toLowerCase()&&String(a.password??"").trim()===p);if(!account){$("loginError").textContent="Incorrect username or password.";return;}if(account.studentId){const st=student(account.studentId);if(st.status==="Suspended"||st.status==="Expelled"){ $("loginError").textContent=`This account is ${st.status.toLowerCase()}. Please contact the school office.`;return;}}const submitButton=$("loginForm").querySelector('button[type="submit"]');submitButton.disabled=true;const loading=document.createElement("div");loading.className="login-loading";loading.innerHTML='<div class="login-loading-inner"><div class="login-loading-logo">✦</div><div class="login-loading-track"><div class="login-loading-progress"></div></div></div>';document.body.appendChild(loading);const progress=loading.querySelector(".login-loading-progress");let progressValue=0;const loadDuration=1000+Math.random()*1000;let progressTimer;const tickProgress=()=>{progressValue=Math.min(95,progressValue+(1+Math.random()*7));progress.style.width=progressValue+"%";progressTimer=setTimeout(tickProgress,35+Math.random()*105);};tickProgress();state.currentUser=account;sessionStorage.setItem("schoolMISLoggedIn",account.username);setTimeout(()=>{clearTimeout(progressTimer);progress.style.width="100%";loading.remove();$("loginScreen").classList.add("hidden");$("app").classList.remove("hidden");loadData();state.currentUser=state.accounts.find(a=>a.username===account.username)||account;setupRoleNav();go(staffRole()?"dashboard":"studenthome");submitButton.disabled=false;},loadDuration);});
 $("togglePassword").onclick=()=>{const p=$("password");p.type=p.type==="password"?"text":"password";$("togglePassword").textContent=p.type==="password"?"Show":"Hide";};
 $("logoutBtn").onclick=()=>{sessionStorage.removeItem("schoolMISLoggedIn");state.currentUser=null;$("app").classList.add("hidden");$("loginScreen").classList.remove("hidden");$("password").value="";};
 $("headerAward").onclick=()=>go("award");$("mobileMenu").onclick=()=>$("sidebar").classList.toggle("open");
@@ -309,7 +317,7 @@ function parseTimetableText(value){
 function viewStudent(id){
  const s=student(id),t=totals(id),es=state.entries.filter(e=>e.studentId===id).sort((a,b)=>(b.date||"").localeCompare(a.date||"")||b.id-a.id);
  state.selectedStudent=id;
- const history=es.map(e=>`<tr><td>${esc(e.date)}</td><td>${entryPill(e)}</td><td>Level ${esc(e.level)}</td><td style="font-weight:800;color:${e.type==="positive"?"var(--green)":"var(--red)"}">${e.type==="positive"?"+":"−"}${esc(e.points)}</td><td>${esc(e.reason)}</td><td>${esc(e.note||"—")}</td><td>${esc(e.staff||"—")}</td><td><button class="btn btn-outline btn-sm" onclick="viewEntry(${e.id})">Details</button></td></tr>`).join("")||'<tr><td colspan="8">No behaviour history.</td></tr>';
+ const history=es.map(e=>`<tr><td>${esc(e.date)}</td><td>${entryPill(e)}</td><td>Level ${esc(e.level)}</td><td style="font-weight:800;color:${e.type==="positive"?"var(--green)":"var(--red)"}">${e.type==="positive"?"+":"−"}${esc(e.points)}</td><td>${esc(e.reason)}</td><td>${esc(e.note||"—")}</td><td>${esc(staffRecordLabel(e))}</td><td><button class="btn btn-outline btn-sm" onclick="viewEntry(${e.id})">Details</button></td></tr>`).join("")||'<tr><td colspan="8">No behaviour history.</td></tr>';
  const canEdit=staffRole();
  const timetable=canEdit?`<div class="field"><label>Individual timetable (one lesson per line: time | subject | teacher; add weekday headings)</label><textarea id="profileTimetable" rows="12" placeholder="Monday\n09:00 | Maths | Jamie Taylor\n10:00 | English | Sam Green\n\nTuesday\n09:00 | Science | Priya Shah">${esc(timetableText(s))}</textarea><span class="muted" style="font-size:11px">Edit this student's timetable independently. Use Monday–Friday headings and one lesson per line.</span></div>`:`<div class="table-wrap"><table><thead><tr><th>Day</th><th>Time</th><th>Subject</th><th>Teacher</th></tr></thead><tbody>${["Monday","Tuesday","Wednesday","Thursday","Friday"].flatMap(day=>(s.timetable?.[day]||[]).map(x=>`<tr><td>${day}</td><td>${esc(x.time)}</td><td>${esc(x.subject)}</td><td>${esc(x.teacher||"—")}</td></tr>`)).join("")||'<tr><td colspan="4">No timetable set.</td></tr>'}</tbody></table></div>`;
  openModal("Student profile",`<div class="profile-top" style="padding:0 0 20px"><div class="profile-avatar">${esc(initials(s))}</div><div><h2>${esc(s.first+" "+s.last)}</h2><div class="muted" style="font-size:12px">${esc(s.id)} · ${esc(s.year)} · ${esc(s.className)} · ${esc(s.house||"No house")}</div></div></div><div class="grid profile-stats" style="margin-bottom:20px">${stat("Reward points",t.pos,"↗","#e8f7ef","Total positive points")}${stat("Negative points",t.neg,"↘","#fff0f0","Total negative points")}${stat("Net points",t.net,"∑","#eaf0ff","Reward minus negative")}</div><h3 style="font-size:13px">Reward and negative point details</h3><div class="table-wrap"><table><thead><tr><th>Date</th><th>Category</th><th>Level</th><th>Points</th><th>Reason</th><th>Staff comment</th><th>Recorded by</th><th>Details</th></tr></thead><tbody>${history}</tbody></table></div><hr style="border:0;border-top:1px solid var(--line);margin:20px 0"><h3 style="font-size:14px">Staff notes ${canEdit?"(Admin / Staff only)":""}</h3>${canEdit?`<div class="field"><textarea id="profileNotes" rows="4" placeholder="Private staff notes for this student">${esc(s.notes||"")}</textarea></div>`:`<div class="notice">Staff notes are private and are not available in student accounts.</div>`}<hr style="border:0;border-top:1px solid var(--line);margin:20px 0"><h3 style="font-size:14px">Individual timetable</h3>${timetable}`,`<button class="btn btn-outline" onclick="closeModal()">Close</button>${canEdit?`<button class="btn btn-primary" onclick="saveStudentProfile('${esc(id)}')">Save notes & timetable</button>`:""}<button class="btn btn-outline" onclick="closeModal();state.awardStudent='${esc(id)}';go('award')">＋ Record points</button>`);
@@ -322,7 +330,7 @@ function renderStudentHome(){
  const history=state.entries.filter(e=>e.studentId===s.id).sort((a,b)=>(b.date||"").localeCompare(a.date||"")||b.id-a.id);
  const dayNames=["Monday","Tuesday","Wednesday","Thursday","Friday"];
  const tt=dayNames.flatMap(day=>(s.timetable?.[day]||[]).map(x=>({...x,day}))).map(x=>`<tr><td>${esc(x.day)}</td><td>${esc(x.time)}</td><td><strong>${esc(x.subject)}</strong></td><td>${esc(x.teacher||"—")}</td></tr>`).join("");
- $("content").innerHTML=pageHead(`Hello, ${esc(s.first)} 👋`,"Your timetable, achievements and behaviour record.")+`<div class="grid stats">${stat("Attendance",att.length?attPct+"%":"—","✓","#e8f7ef",att.length+" recorded sessions")}${stat("Reward points",t.pos,"↗","#e8f7ef","Positive awards and achievements")}${stat("Negative points",t.neg,"↘","#fff0f0","Behaviour points")}${stat("Net points",t.net,"∑","#eaf0ff","Reward minus negative")}</div><div class="grid two-col"><section class="panel"><div class="panel-head"><h3>My timetable</h3></div><div class="table-wrap"><table><thead><tr><th>Day</th><th>Time</th><th>Lesson</th><th>Teacher</th></tr></thead><tbody>${tt||'<tr><td colspan="4">Your timetable has not been set yet. Please ask school staff.</td></tr>'}</tbody></table></div></section><section class="panel"><div class="panel-head"><h3>My assignments</h3></div><div class="panel-body">${assignments.map(a=>`<div class="activity-item" style="margin-bottom:13px"><div class="activity-icon" style="background:#eaf0ff">▣</div><div class="activity-copy"><strong>${esc(a.title)}</strong><small>Due ${esc(a.dueDate||"No due date")} · ${esc(a.comment||"No comment")}</small></div><span class="pill ${a.completed?"pill-positive":"pill-amber"}">${a.completed?"Completed":"To do"}</span></div>`).join("")||'<div class="empty">No assignments yet.</div>'}</div></section></div><div class="panel" style="margin-top:17px"><div class="panel-head"><h3>Reward points history</h3><span class="pill pill-positive">+${t.pos} total</span></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Level</th><th>Points</th><th>Reason</th><th>Staff comment</th><th>Recorded by</th></tr></thead><tbody>${history.filter(e=>e.type==="positive").map(e=>`<tr><td>${esc(e.date)}</td><td>${esc(e.level)}</td><td style="color:var(--green);font-weight:800">+${esc(e.points)}</td><td>${esc(e.reason)}</td><td>${esc(e.note||"—")}</td><td>${esc(e.staff||"—")}</td></tr>`).join("")||'<tr><td colspan="6">No reward points recorded.</td></tr>'}</tbody></table></div></div><div class="panel" style="margin-top:17px"><div class="panel-head"><h3>Negative points history</h3><span class="pill pill-negative">−${t.neg} total</span></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Level</th><th>Points</th><th>Reason</th><th>Staff comment</th><th>Recorded by</th><th>Follow-up</th></tr></thead><tbody>${history.filter(e=>e.type==="negative").map(e=>`<tr><td>${esc(e.date)}</td><td>${esc(e.level)}</td><td style="color:var(--red);font-weight:800">−${esc(e.points)}</td><td>${esc(e.reason)}</td><td>${esc(e.note||"—")}</td><td>${esc(e.staff||"—")}</td><td>${esc(e.status||"Recorded")}</td></tr>`).join("")||'<tr><td colspan="7">No negative points recorded.</td></tr>'}</tbody></table></div></div><div class="panel" style="margin-top:17px"><div class="panel-head"><h3>My attendance</h3></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Status</th><th>Comment</th></tr></thead><tbody>${att.slice().sort((a,b)=>(b.date||"").localeCompare(a.date||"")).map(a=>`<tr><td>${esc(a.date)}</td><td>${esc(a.status)}${a.status==="Late"&&a.minutesLate?` · ${a.minutesLate} min`:""}</td><td>${esc(a.comment||"—")}</td></tr>`).join("")||'<tr><td colspan="3">No attendance recorded yet.</td></tr>'}</tbody></table></div></div>`;
+ $("content").innerHTML=pageHead(`Hello, ${esc(s.first)} 👋`,"Your timetable, achievements and behaviour record.")+`<div class="grid stats">${stat("Attendance",att.length?attPct+"%":"—","✓","#e8f7ef",att.length+" recorded sessions")}${stat("Reward points",t.pos,"↗","#e8f7ef","Positive awards and achievements")}${stat("Negative points",t.neg,"↘","#fff0f0","Behaviour points")}${stat("Net points",t.net,"∑","#eaf0ff","Reward minus negative")}</div><div class="grid two-col"><section class="panel"><div class="panel-head"><h3>My timetable</h3></div><div class="table-wrap"><table><thead><tr><th>Day</th><th>Time</th><th>Lesson</th><th>Teacher</th></tr></thead><tbody>${tt||'<tr><td colspan="4">Your timetable has not been set yet. Please ask school staff.</td></tr>'}</tbody></table></div></section><section class="panel"><div class="panel-head"><h3>My assignments</h3></div><div class="panel-body">${assignments.map(a=>`<div class="activity-item" style="margin-bottom:13px"><div class="activity-icon" style="background:#eaf0ff">▣</div><div class="activity-copy"><strong>${esc(a.title)}</strong><small>Due ${esc(a.dueDate||"No due date")} · ${esc(a.comment||"No comment")}</small></div><span class="pill ${a.completed?"pill-positive":"pill-amber"}">${a.completed?"Completed":"To do"}</span></div>`).join("")||'<div class="empty">No assignments yet.</div>'}</div></section></div><div class="panel" style="margin-top:17px"><div class="panel-head"><h3>Reward points history</h3><span class="pill pill-positive">+${t.pos} total</span></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Level</th><th>Points</th><th>Reason</th><th>Staff comment</th><th>Recorded by</th></tr></thead><tbody>${history.filter(e=>e.type==="positive").map(e=>`<tr><td>${esc(e.date)}</td><td>${esc(e.level)}</td><td style="color:var(--green);font-weight:800">+${esc(e.points)}</td><td>${esc(e.reason)}</td><td>${esc(e.note||"—")}</td><td>${esc(staffRecordLabel(e))}</td></tr>`).join("")||'<tr><td colspan="6">No reward points recorded.</td></tr>'}</tbody></table></div></div><div class="panel" style="margin-top:17px"><div class="panel-head"><h3>Negative points history</h3><span class="pill pill-negative">−${t.neg} total</span></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Level</th><th>Points</th><th>Reason</th><th>Staff comment</th><th>Recorded by</th><th>Follow-up</th></tr></thead><tbody>${history.filter(e=>e.type==="negative").map(e=>`<tr><td>${esc(e.date)}</td><td>${esc(e.level)}</td><td style="color:var(--red);font-weight:800">−${esc(e.points)}</td><td>${esc(e.reason)}</td><td>${esc(e.note||"—")}</td><td>${esc(staffRecordLabel(e))}</td><td>${esc(e.status||"Recorded")}</td></tr>`).join("")||'<tr><td colspan="7">No negative points recorded.</td></tr>'}</tbody></table></div></div><div class="panel" style="margin-top:17px"><div class="panel-head"><h3>My attendance</h3></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Status</th><th>Comment</th></tr></thead><tbody>${att.slice().sort((a,b)=>(b.date||"").localeCompare(a.date||"")).map(a=>`<tr><td>${esc(a.date)}</td><td>${esc(a.status)}${a.status==="Late"&&a.minutesLate?` · ${a.minutesLate} min`:""}</td><td>${esc(a.comment||"—")}</td></tr>`).join("")||'<tr><td colspan="3">No attendance recorded yet.</td></tr>'}</tbody></table></div></div>`;
 }
 function renderAttendance(){
  const classFilter=state.attendanceClass||"all";const students=staffRole()?state.students.filter(s=>s.status!=="Expelled"&&(classFilter==="all"||s.className===classFilter)):state.students.filter(s=>s.id===state.currentUser?.studentId);
@@ -438,7 +446,7 @@ function renderStudentPoints(){
  const entries=(state.entries||[]).filter(e=>e.studentId===s.id).sort((a,b)=>String(b.date||"").localeCompare(String(a.date||""))||Number(b.id||0)-Number(a.id||0));
  $('content').innerHTML=pageHead("My points","Your positive and negative behaviour points, with the reasons recorded by staff.")+
  `<div class="grid stats">${stat("Positive points",t.pos,"↗","#e8f7ef","Awards and achievements")}${stat("Negative points",t.neg,"↘","#fff0f0","Behaviour points")}${stat("Net points",t.net,"★","#e8f7ef","Positive minus negative")}${stat("Records",entries.length,"▤","#f3f7f4","Total point entries")}</div>`+
- `<div class="panel"><div class="panel-head"><h3>Points history</h3><span class="muted" style="font-size:11px">${entries.length} records</span></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Type</th><th>Level</th><th>Points</th><th>Reason</th><th>Comment</th><th>Recorded by</th></tr></thead><tbody>${entries.map(e=>`<tr><td>${esc(e.date||"—")}</td><td>${entryPill(e)}</td><td>Level ${esc(e.level??"—")}</td><td style="font-weight:800;color:${e.type==="positive"?"var(--green)":"var(--red)"}">${e.type==="positive"?"+":"−"}${esc(e.points??0)}</td><td>${esc(e.reason||"—")}</td><td>${esc(e.note||e.comment||"—")}</td><td>${esc(e.staff||"—")}</td></tr>`).join("")||'<tr><td colspan="7"><div class="empty">No points have been recorded yet.</div></td></tr>'}</tbody></table></div></div>`;
+ `<div class="panel"><div class="panel-head"><h3>Points history</h3><span class="muted" style="font-size:11px">${entries.length} records</span></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Type</th><th>Level</th><th>Points</th><th>Reason</th><th>Comment</th><th>Recorded by</th></tr></thead><tbody>${entries.map(e=>`<tr><td>${esc(e.date||"—")}</td><td>${entryPill(e)}</td><td>Level ${esc(e.level??"—")}</td><td style="font-weight:800;color:${e.type==="positive"?"var(--green)":"var(--red)"}">${e.type==="positive"?"+":"−"}${esc(e.points??0)}</td><td>${esc(e.reason||"—")}</td><td>${esc(e.note||e.comment||"—")}</td><td>${esc(staffRecordLabel(e))}</td></tr>`).join("")||'<tr><td colspan="7"><div class="empty">No points have been recorded yet.</div></td></tr>'}</tbody></table></div></div>`;
 }
 function studentTimetableData(s){
  const key=today+"-"+s.id;let tt=s.timetable||state.timetableCache?.[key];
@@ -638,7 +646,7 @@ function awardDetentionNegative(id){
  const s=student(d.studentId);
  if(!confirm(`Add 1 negative point to ${s.first} ${s.last} for failure to follow instruction after a missed detention?`))return;
  const entryId=Date.now();
- const entry={id:entryId,studentId:d.studentId,type:"negative",level:1,points:1,reason:"Failure to follow instruction",note:`Automatically recorded for missed detention on ${d.date}${d.time?" at "+d.time:""}.`,staff:state.currentUser?.name||"Staff",date:today,status:"Recorded"};
+ const entry={id:entryId,studentId:d.studentId,type:"negative",level:1,points:1,reason:"Failure to follow instruction",note:`Automatically recorded for missed detention on ${d.date}${d.time?" at "+d.time:""}.`,staff:staffTitleName(state.currentUser),date:today,status:"Recorded"};
  state.entries.push(entry);
  d.negativePointEntryId=entryId;
  d.negativePointAwardedAt=new Date().toISOString();
@@ -1078,6 +1086,246 @@ else { $("username").value="admin"; $("password").value="School123!"; }
     }
   };
 })();
+</script>
+
+
+<script>
+// Account-aware staff display names and titles.
+function staffTitleName(account){
+  if(!account) return "School staff";
+  const full=String(account.name||account.username||"School staff").trim();
+  const parts=full.split(/\s+/);
+  const surname=parts.length>1?parts[parts.length-1]:parts[0];
+  const title=["Mr","Mrs","Miss"].includes(account.title)?account.title:"Mr";
+  return `${title} ${surname}`;
+}
+function staffRecordLabel(entry){
+  const value=String(entry?.staff||"").trim();
+  if(!value||["Staff","Staff member","Teacher","Admin"].includes(value))return staffTitleName(state.currentUser);
+  return value;
+}
+function signedInDisplayName(){
+  return String(state.currentUser?.name||state.currentUser?.username||"School staff").trim();
+}
+function syncSignedInUserDisplay(){
+  const user=state.currentUser;
+  if(!user)return;
+  const name=document.querySelector(".user-chip .user-name");
+  const avatar=document.querySelector(".user-chip .avatar");
+  if(name){
+    name.innerHTML=`${esc(signedInDisplayName())}<div class="muted" style="font-size:10px;font-weight:500">${esc(user.role||"User")}</div>`;
+  }
+  if(avatar){
+    const parts=signedInDisplayName().split(/\s+/);
+    avatar.textContent=(parts[0]?.[0]||"")+(parts.length>1?(parts[parts.length-1]?.[0]||""):"");
+  }
+}
+const _setupRoleNavWithUserName=setupRoleNav;
+setupRoleNav=function(){_setupRoleNavWithUserName();syncSignedInUserDisplay();};
+
+// Make the signed-in account, rather than a fixed demo person, the author of new point records.
+const _renderAwardWithUserName=renderAward;
+renderAward=function(){
+  _renderAwardWithUserName();
+  const staffField=$("awardStaff");
+  if(staffField){
+    staffField.value=staffTitleName(state.currentUser);
+    staffField.readOnly=true;
+    staffField.title="Automatically set from the signed-in staff account";
+  }
+};
+const _submitAwardWithUserName=submitAward;
+submitAward=function(ev){
+  const field=$("awardStaff");
+  if(field)field.value=staffTitleName(state.currentUser);
+  return _submitAwardWithUserName(ev);
+};
+
+// Detention-related point records should carry the same titled staff attribution.
+const _awardDetentionNegativeWithUserName=awardDetentionNegative;
+awardDetentionNegative=function(...args){
+  const result=_awardDetentionNegativeWithUserName.apply(this,args);
+  return result;
+};
+// Replace generic legacy attribution at display time where the original author is unavailable.
+const _viewEntryWithStaffTitle=viewEntry;
+viewEntry=function(id){
+  const e=state.entries.find(x=>x.id===id);
+  if(e && (!e.staff || ["Staff","Staff member","Teacher","Admin"].includes(String(e.staff).trim()))){
+    const old=e.staff;
+    e.staff=staffTitleName(state.currentUser);
+    _viewEntryWithStaffTitle(id);
+    e.staff=old;
+    return;
+  }
+  _viewEntryWithStaffTitle(id);
+};
+
+// Account creation includes a title for staff, teachers and admins.
+openUserModal=function(){
+  openModal("Add account",`<div class="form-grid">
+    <div class="field"><label>Full name *</label><input id="uName" required autocomplete="off"></div>
+    <div class="field"><label>Username *</label><input id="uUsername" required autocomplete="off"></div>
+    <div class="field"><label>Password *</label><input id="uPassword" type="password" required minlength="6" autocomplete="new-password"></div>
+    <div class="field"><label>Account type *</label><select id="uRole" onchange="updateAccountLinkField()"><option value="Teacher">Teacher</option><option value="Staff">Staff</option><option value="Admin">Admin</option><option value="Student">Student</option><option value="Parent">Parent / carer</option></select></div>
+    <div class="field" id="uTitleField"><label>Staff title *</label><select id="uTitle"><option>Mr</option><option>Mrs</option><option>Miss</option></select></div>
+    <div class="field span-2" id="uStudentField"><label id="uStudentLabel">Link student record</label><select id="uStudent"><option value="">Choose a student…</option>${state.students.map(s=>`<option value="${esc(s.id)}">${esc(s.first+" "+s.last)} · ${esc(s.id)} · ${esc(s.className)}</option>`).join("")}</select><small class="muted" id="uStudentHelp">Student and parent accounts must be linked to a student record. A parent can be linked to a student who already has their own student login.</small></div>
+  </div>`,`<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveUser()">Create account</button>`);
+  updateAccountLinkField();
+};
+updateAccountLinkField=function(){
+  const role=$("uRole")?.value,field=$("uStudentField"),sel=$("uStudent"),label=$("uStudentLabel"),help=$("uStudentHelp"),titleField=$("uTitleField");
+  if(!field||!sel)return;
+  const linkedRequired=role==="Student"||role==="Parent";
+  field.classList.toggle("hidden",!linkedRequired);
+  sel.required=linkedRequired;
+  label.textContent=role==="Parent"?"Link to their child *":"Link student record *";
+  help.textContent=role==="Parent"?"Choose the child this parent or carer is allowed to view. Multiple parent accounts can link to the same student.":"Student accounts must be linked to a student record.";
+  if(titleField)titleField.classList.toggle("hidden",!["Teacher","Staff","Admin"].includes(role));
+};
+saveUser=function(){
+  const name=$("uName").value.trim(),username=$("uUsername").value.trim(),password=$("uPassword").value,role=$("uRole").value,studentId=$("uStudent").value;
+  const title=$("uTitle")?.value||"Mr";
+  if(!name||!username||password.length<6)return showToast("Enter a name, username and password of at least 6 characters.");
+  if(state.accounts.some(a=>a.username.toLowerCase()===username.toLowerCase()))return showToast("That username is already in use.");
+  if((role==="Student"||role==="Parent")&&!studentId)return showToast("Link a student record for student and parent accounts.");
+  if(role==="Student"&&studentId&&state.accounts.some(a=>a.studentId===studentId&&a.role==="Student"))return showToast("That student already has a linked student account.");
+  state.accounts.push({name,username,password,role,studentId,title:["Teacher","Staff","Admin"].includes(role)?title:""});
+  saveData();closeModal();renderUsers();showToast("Account created.");
+};
+
+// Keep the dashboard greeting aligned with the logged-in account.
+const _renderDashboardWithUserName=renderDashboard;
+renderDashboard=function(){
+  _renderDashboardWithUserName();
+  const heading=$("content")?.querySelector(".page-head h1");
+  if(heading&&state.currentUser&&staffRole())heading.textContent=`Good morning, ${String(state.currentUser.name||state.currentUser.username).split(/\s+/)[0]} 👋`;
+};
+
+// Configurable reason lists for positive and negative point records.
+const DEFAULT_POINT_REASONS = {
+  positive: [
+    "Excellent class participation","Good effort","Outstanding effort",
+    "Helpful to others","Positive attitude","Exceptional achievement",
+    "Improved attendance","Other achievement"
+  ],
+  negative: [
+    "Disruption to learning","Repeated lateness","Failure to follow instructions",
+    "Unsafe behaviour","Inappropriate language","Damage to property",
+    "Bullying concern","Other behaviour concern"
+  ]
+};
+function getPointReasons(){
+  try{
+    const saved=JSON.parse(localStorage.getItem("schoolMISPointReasons")||"null");
+    return {
+      positive:Array.isArray(saved?.positive)&&saved.positive.length?saved.positive:DEFAULT_POINT_REASONS.positive.slice(),
+      negative:Array.isArray(saved?.negative)&&saved.negative.length?saved.negative:DEFAULT_POINT_REASONS.negative.slice()
+    };
+  }catch(e){
+    return {positive:DEFAULT_POINT_REASONS.positive.slice(),negative:DEFAULT_POINT_REASONS.negative.slice()};
+  }
+}
+function savePointReasons(){
+  const positive=[...new Set($("positiveReasons").value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean))];
+  const negative=[...new Set($("negativeReasons").value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean))];
+  if(!positive.length||!negative.length)return showToast("Add at least one reason for both positive and negative points.");
+  if([...positive,...negative].some(x=>x.length>100))return showToast("Each reason must be 100 characters or fewer.");
+  localStorage.setItem("schoolMISPointReasons",JSON.stringify({positive,negative}));
+  showToast("Point reasons saved. They will appear when recording new points.");
+  renderSettings();
+}
+function resetPointReasons(){
+  if(!confirm("Reset positive and negative point reasons to the original defaults?"))return;
+  localStorage.removeItem("schoolMISPointReasons");
+  showToast("Default point reasons restored.");
+  renderSettings();
+}
+const _renderAwardWithConfigurableReasons=renderAward;
+renderAward=function(){
+  _renderAwardWithConfigurableReasons();
+  const select=$("awardReason");
+  if(!select)return;
+  const reasons=getPointReasons()[state.awardType==="negative"?"negative":"positive"];
+  const previous=select.value;
+  select.innerHTML='<option value="">Select a reason…</option>'+reasons.map(r=>`<option value="${esc(r)}">${esc(r)}</option>`).join("");
+  if(reasons.includes(previous))select.value=previous;
+};
+let pointReasonDraft = null;
+function ensurePointReasonDraft(){
+  if(!pointReasonDraft){const current=getPointReasons();pointReasonDraft={positive:current.positive.slice(),negative:current.negative.slice()};}
+  return pointReasonDraft;
+}
+function renderPointReasonEditor(){
+  const host=$("pointReasonSettings");
+  if(!host)return;
+  const draft=ensurePointReasonDraft();
+  const card=(type,title,subtitle,icon)=>{
+    const items=draft[type];
+    return `<div class="reason-card reason-${type}">
+      <div class="reason-card-top"><div class="reason-icon">${icon}</div><div class="reason-card-title"><h4>${title}</h4><p>${subtitle}</p></div><span class="reason-count">${items.length} ${items.length===1?'reason':'reasons'}</span></div>
+      <div class="reason-add-row"><input id="${type}ReasonNew" type="text" maxlength="100" placeholder="Type a new reason…" aria-label="New ${type} reason" onkeydown="if(event.key==='Enter'){event.preventDefault();addPointReason('${type}')}"/><button class="btn btn-primary" onclick="addPointReason('${type}')">＋ Add</button></div>
+      <div class="reason-list">${items.length?items.map((r,i)=>`<div class="reason-item"><span class="reason-item-number">${i+1}</span><input class="reason-edit-input" type="text" maxlength="100" value="${esc(r)}" aria-label="Edit ${type} reason ${i+1}" title="Click to edit this reason" oninput="updatePointReason('${type}',${i},this.value)"/><button class="reason-remove" title="Remove reason" aria-label="Remove reason ${i+1}" onclick="removePointReason('${type}',${i})">×</button></div>`).join(''):`<div class="reason-empty">No reasons yet. Add one above.</div>`}</div>
+    </div>`;
+  };
+  host.innerHTML=`<div class="reason-editor-grid">${card('positive','Positive points','Recognise effort, achievement and contribution','＋')}${card('negative','Negative points','Record behaviour concerns consistently','−')}</div>
+    <div class="reason-editor-footer"><div class="reason-hint"><span>ⓘ</span> Changes are saved for this browser and used in the point-awarding dropdown. Existing records stay unchanged.</div><div class="reason-actions"><button class="btn btn-outline" onclick="resetPointReasons()">Restore defaults</button><button class="btn btn-primary" onclick="savePointReasons()">Save changes</button></div></div>`;
+}
+function addPointReason(type){
+  const input=$(type+'ReasonNew');if(!input)return;
+  const value=input.value.trim();if(!value)return showToast('Type a reason first.');
+  const draft=ensurePointReasonDraft();
+  if(draft[type].some(x=>x.toLowerCase()===value.toLowerCase()))return showToast('That reason is already in the list.');
+  if(draft[type].length>=50)return showToast('You can add up to 50 reasons in each list.');
+  draft[type].push(value);renderPointReasonEditor();$(type+'ReasonNew')?.focus();
+}
+function updatePointReason(type,index,value){
+  const draft=ensurePointReasonDraft();
+  if(!draft[type]||index<0||index>=draft[type].length)return;
+  draft[type][index]=value;
+}
+function removePointReason(type,index){
+  const draft=ensurePointReasonDraft();
+  if(draft[type].length<=1)return showToast('Keep at least one reason in each list.');
+  draft[type].splice(index,1);renderPointReasonEditor();
+}
+function savePointReasons(){
+  const draft=ensurePointReasonDraft();
+  if(!draft.positive.length||!draft.negative.length)return showToast('Keep at least one reason in each list.');
+  if([...draft.positive,...draft.negative].some(x=>x.length>100))return showToast('Each reason must be 100 characters or fewer.');
+  localStorage.setItem('schoolMISPointReasons',JSON.stringify({positive:draft.positive,negative:draft.negative}));
+  pointReasonDraft=null;showToast('Point reasons saved.');renderSettings();
+}
+function resetPointReasons(){
+  if(!confirm('Restore the original positive and negative point reasons?'))return;
+  localStorage.removeItem('schoolMISPointReasons');pointReasonDraft=null;
+  showToast('Default point reasons restored.');renderSettings();
+}
+const _renderSettingsWithConfigurableReasons=renderSettings;
+renderSettings=function(){
+  _renderSettingsWithConfigurableReasons();
+  const style=`<style>
+  .reason-settings{margin-top:18px;overflow:hidden}.reason-settings .panel-head{align-items:center}.reason-settings-intro{margin:0;color:var(--muted);font-size:13px;line-height:1.55;max-width:760px}
+  .reason-editor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+  .reason-card{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card)}
+  .reason-card-top{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--border)}
+  .reason-icon{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:23px;font-weight:700;flex:none}
+  .reason-positive .reason-icon{background:#e8f7ef;color:#16834a}.reason-negative .reason-icon{background:#fff0ed;color:#c84b3e}
+  .reason-card-title{min-width:0;flex:1}.reason-card-title h4{font-size:14px;margin:0 0 3px}.reason-card-title p{font-size:11px;color:var(--muted);margin:0;line-height:1.4}
+  .reason-count{font-size:10px;font-weight:700;color:var(--muted);background:var(--surface,#f4f6f8);padding:5px 8px;border-radius:20px;white-space:nowrap}
+  .reason-add-row{display:flex;gap:8px;padding:13px 14px;border-bottom:1px solid var(--border)}.reason-add-row input{min-width:0;flex:1;border:1px solid var(--border);border-radius:8px;padding:9px 11px;background:var(--bg,#fff);color:var(--text);font:inherit;font-size:12px}.reason-add-row input:focus{outline:2px solid var(--primary,#4778c7);outline-offset:1px}
+  .reason-add-row .btn{white-space:nowrap;padding:8px 12px;font-size:12px}
+  .reason-list{padding:8px 14px 13px;max-height:310px;overflow:auto}.reason-item{display:flex;align-items:center;gap:10px;padding:8px 2px;border-bottom:1px solid var(--border)}.reason-item:last-child{border-bottom:0}
+  .reason-item-number{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;background:var(--surface,#f4f6f8);color:var(--muted);font-size:10px;font-weight:700;flex:none}.reason-edit-input{min-width:0;flex:1;width:100%;border:1px solid transparent;border-radius:7px;padding:7px 9px;background:transparent;color:var(--text);font:inherit;font-size:12px;line-height:1.4}.reason-edit-input:hover{border-color:var(--border);background:var(--bg,#fff)}.reason-edit-input:focus{outline:2px solid var(--primary,#4778c7);outline-offset:0;border-color:transparent;background:var(--bg,#fff)}.reason-remove{width:27px;height:27px;border:0;border-radius:7px;background:transparent;color:var(--muted);font-size:19px;cursor:pointer}.reason-remove:hover{background:#fff0ed;color:#c84b3e}.reason-empty{padding:18px 4px;text-align:center;color:var(--muted);font-size:12px}
+  .reason-editor-footer{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:16px;flex-wrap:wrap}.reason-hint{font-size:11px;color:var(--muted);line-height:1.5;flex:1;min-width:220px}.reason-hint span{margin-right:5px}.reason-actions{display:flex;gap:9px;flex-wrap:wrap}
+  @media(max-width:720px){.reason-editor-grid{grid-template-columns:1fr}.reason-editor-footer{align-items:stretch}.reason-actions{width:100%}.reason-actions button{flex:1}}
+  </style>`;
+  $('content').insertAdjacentHTML('beforeend',`${style}<section class="panel reason-settings" id="pointReasonSettings"><div class="panel-head"><div><h3>Point reasons</h3><p class="reason-settings-intro">Manage the options staff see when awarding positive or recording negative points. Add new reasons, or click an existing reason to edit it. Remove any you no longer need.</p></div><span class="pill pill-blue">Dropdown options</span></div><div class="panel-body" id="pointReasonEditorBody"></div></section>`);
+  // Render inside the panel body while keeping the editor's stable host available.
+  const body=$('pointReasonEditorBody');if(body){body.id='pointReasonSettings';body.parentElement.id='pointReasonSettingsPanel';}
+  renderPointReasonEditor();
+};
+
 </script>
 
 </body>
